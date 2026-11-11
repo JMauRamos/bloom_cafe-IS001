@@ -1,0 +1,98 @@
+{% extends "base_clientes.html" %}
+
+{% block title %} Menu {% endblock %}
+
+{% block content %}
+
+<main id="menu">
+    <section id="hero">
+        <div id="contenido_hero">
+            <h1>Texto Pendiente</h1>
+            <div id="boton_hero">
+                <a href="#menu_principal">Ver Menu</a>
+            </div>
+        </div>
+    </section>
+    <section id="menu_principal">
+        <div class="buscar">
+            <form action="">
+                <i class="bi bi-search"></i>
+                <input id="buscador" type="text" placeholder="Buscar...">
+            </form>
+        </div>
+        <div class="categorias">
+            <button class="categoria activa" data-categoria="todos">Todos</button>
+            <button class="categoria" data-categoria="jugo">Jugos</button>
+            <button class="categoria" data-categoria="smoothie">Smoothies</button>
+            <button class="categoria" data-categoria="hidratacion">Hidratacion y Boost</button>
+            <button class="categoria" data-categoria="cafe">Cafe y Energia</button>
+            <button class="categoria" data-categoria="sandwich">Sandwiches</button>
+        </div>
+        <div id="productos_menu">
+            <div class="producto" data-categoria="jugo">
+                <img src="" alt="Imagen Producto">
+                <div class="info_producto">
+                    <h3>Detox</h3>
+                    <div class="info_comprar">
+                        <div class="precios">
+                            <p>Chico: $65</p>
+                            <p>Grande: $100</p>
+                        </div>
+                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="producto" data-categoria="smoothie">
+                <img src="" alt="Imagen Producto">
+                <div class="info_producto">
+                    <h3>Red Velvet</h3>
+                    <div class="info_comprar">
+                        <div class="precios">
+                            <p>Chico: $95</p>
+                            <p>Grande: $135</p>
+                        </div>
+                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="producto" data-categoria="hidratacion">
+                <img src="" alt="Imagen Producto">
+                <div class="info_producto">
+                    <h3>Suero Natural</h3>
+                    <div class="info_comprar">
+                        <div class="precios">
+                            <p>Precio: $40</p>
+                        </div>
+                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="producto" data-categoria="cafe">
+                <img src="" alt="Imagen Producto">
+                <div class="info_producto">
+                    <h3>Latte</h3>
+                    <div class="info_comprar">
+                        <div class="precios">
+                            <p>Precio: $70</p>
+                        </div>
+                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="producto" data-categoria="sandwich">
+                <img src="" alt="Imagen Producto">
+                <div class="info_producto">
+                    <h3>Sandwich de Jamon de Pavo y Queso</h3>
+                    <div class="info_comprar">
+                        <div class="precios">
+                            <p>Precio: $95</p>
+                        </div>
+                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

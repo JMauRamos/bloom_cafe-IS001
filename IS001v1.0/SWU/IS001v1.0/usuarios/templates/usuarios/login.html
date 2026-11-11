@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom Café - Login</title>
+    <link rel="stylesheet" href="{% static "css/style_clientes.css" %}">
+    <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
+</head>
+<body>
+    <header>
+        <section>
+            <div id="logo_container">
+                <a href="{%url 'inicio' %}"><img id="logo" src="{% static "images/Logo.jpeg" %}" alt="Logo de Bloom Café"></a>
+            </div>
+        </section>
+    </header>
+    <body>
+        <section>
+            <div id="contenedor_login">
+                <div id="instruccion">
+                    <h2>Ingrese sus credenciales</h2>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="campo_login">
+                        <label for="">Usuario: </label>
+                        <input type="text" id="username" name="username" >
+                    </div>
+                    <div class="campo_login">
+                        <label for="">Contraseña: </label>
+                        <input type="password" id="password" name="password" >
+                    </div>
+                    <div>
+                        <button id="boton_login" type="submit">Iniciar Sesion</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </body>
+    <footer>
+        
+    </footer>
+</body>
+</html>

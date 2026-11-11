@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestión de productos | Bloom Café</title>
+    <link rel="stylesheet" href="{% static "css/productos.css" %}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="dashboard.html">
+        <img src="{% static "images/Logo.jpeg" %}" alt="Bloom Café">
+        <span>Panel administrativo</span>
+      </a>
+      <div class="user"><span class="avatar">A</span><span>Administrador</span><span class="chevron">⌄</span></div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="side-label">MENÚ</div>
+      <nav>
+        <a href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
+        <a href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
+        <a class="active" href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
+        <a href="#reportes"><span>▥</span>Reportes</a>
+      </nav>
+      <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
+    </aside>
+
+    <main class="main">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">ADMINISTRACIÓN / CATÁLOGO</p>
+          <h1>Gestión de productos</h1>
+          <p class="sub">Administra el menú de tu cafetería.</p>
+        </div>
+        <button class="button primary" id="addProduct">＋ Agregar producto</button>
+      </div>
+
+      <section class="summary-bar" aria-label="Resumen de productos">
+        <span class="summary-icon">♧</span>
+        <span><strong id="productCount">5</strong> productos en tu menú</span>
+        <span class="summary-separator"></span>
+        <span><span class="active-dot"></span> <span id="availableCount">5</span> disponibles</span>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <label class="search"><span>⌕</span><input id="searchProducts" type="search" placeholder="Buscar producto..." aria-label="Buscar producto"></label>
+          <span class="toolbar-hint">Filtra por categoría</span>
+        </div>
+        <div class="category-tabs" role="tablist" aria-label="Categorías de productos">
+          <button class="category-tab active" data-category="Todos">Todos</button>
+          <button class="category-tab" data-category="Café">Cafés</button>
+          <button class="category-tab" data-category="Frappé">Frappés</button>
+          <button class="category-tab" data-category="Té">Tés</button>
+          <button class="category-tab" data-category="Panadería">Panadería</button>
+          <button class="category-tab" data-category="Postre">Postres</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="productsTable"></tbody>
+          </table>
+          <div class="empty" id="emptyProducts" hidden>No encontramos productos con esos filtros.</div>
+        </div>
+        <div class="table-footer"><span id="tableCount">Mostrando 5 productos</span><span class="updated-note">Los cambios se aplican a este catálogo</span></div>
+      </section>
+
+      <footer>Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026</footer>
+    </main>
+
+    <dialog class="product-dialog" id="productDialog">
+      <form id="productForm" method="dialog">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">CATÁLOGO DE PRODUCTOS</p><h2 id="dialogTitle">Agregar producto</h2></div>
+          <button class="close-dialog" type="button" id="closeDialog" aria-label="Cerrar">×</button>
+        </div>
+        <input type="hidden" id="productId">
+        <div class="form-grid">
+          <label class="field">Nombre<input id="productName" required maxlength="50" placeholder="Ej. Café Americano"></label>
+          <label class="field">Categoría<select id="productCategory" required><option value="">Seleccionar categoría</option><option>Café</option><option>Frappé</option><option>Té</option><option>Panadería</option><option>Postre</option></select></label>
+          <label class="field">Precio (MXN)<input id="productPrice" type="number" min="1" step="1" required placeholder="50"></label>
+          <label class="field">Stock disponible<input id="productStock" type="number" min="0" step="1" required placeholder="20"></label>
+        </div>
+        <label class="field description-field">Descripción <span class="optional">(opcional)</span><textarea id="productDescription" rows="3" maxlength="140" placeholder="Describe brevemente el producto"></textarea></label>
+        <div class="dialog-actions"><button class="button secondary" type="button" id="cancelDialog">Cancelar</button><button class="button primary" type="submit">Guardar producto</button></div>
+      </form>
+    </dialog>
+        <script src="{% static "js/productos.js" %}"></script>
+  </body>
+</html>

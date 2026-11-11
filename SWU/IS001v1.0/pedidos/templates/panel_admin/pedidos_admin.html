@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Pedidos | Bloom Caf&eacute;
+  </title>
+  <link rel="stylesheet" href="{% static "css/pedidos.css" %}">
+ </head>
+ <body>
+  <header class="topbar">
+   <a class="brand" href="dashboard.html">
+    <img alt="Bloom Caf&eacute;" src="{% static "images/Logo.jpeg" %}"/>
+    <span>
+     Panel administrativo
+    </span>
+   </a>
+   <div class="user">
+    <span class="avatar">
+     A
+    </span>
+    <span>
+     Administrador
+    </span>
+    <span class="chevron">
+     ⌄
+    </span>
+   </div>
+  </header>
+  <aside class="sidebar">
+   <div class="side-label">
+    MEN&Uacute;
+   </div>
+   <nav>
+        <a href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
+        <a class="active" href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
+        <a href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
+        <a href="#reportes"><span>▥</span>Reportes</a>
+   </nav>
+    <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
+    <span>
+     &rarrhk;
+    </span>
+    Cerrar sesi&oacute;n
+   </a>
+  </aside>
+  <main class="main">
+   <div class="page-heading">
+    <div>
+     <p class="eyebrow">
+      ADMINISTRACI&Oacute;N / PEDIDOS
+     </p>
+     <h1>
+      Gesti&oacute;n de pedidos
+     </h1>
+     <p class="sub">
+      Consulta y actualiza los pedidos de tu cafeter&iacute;a.
+     </p>
+    </div>
+    <div class="today">
+     <span class="calendar">
+      ▦
+     </span>
+     <span>
+      Hoy, 7 oct. 2026
+     </span>
+    </div>
+   </div>
+   <section class="summary">
+    <article>
+     <span class="summary-icon all">
+      ▤
+     </span>
+     <div>
+      <small>
+       Total de hoy
+      </small>
+      <strong>
+       12
+      </strong>
+     </div>
+    </article>
+    <article>
+     <span class="summary-icon active-state">
+      ◷
+     </span>
+     <div>
+      <small>
+       En proceso
+      </small>
+      <strong>
+       4
+      </strong>
+     </div>
+    </article>
+    <article>
+     <span class="summary-icon ready">
+      &checkmark;
+     </span>
+     <div>
+      <small>
+       Listos
+      </small>
+      <strong>
+       3
+      </strong>
+     </div>
+    </article>
+    <article>
+     <span class="summary-icon done">
+      &nearrow;
+     </span>
+     <div>
+      <small>
+       Entregados
+      </small>
+      <strong>
+       5
+      </strong>
+     </div>
+    </article>
+   </section>
+   <section class="panel">
+    <div class="toolbar">
+     <label class="search">
+      <span>
+       &telrec;
+      </span>
+      <input aria-label="Buscar pedido o producto" id="search" placeholder="Buscar pedido o producto..." type="search"/>
+     </label>
+     <label class="date-filter">
+      <span>
+       ▦
+      </span>
+      <select aria-label="Filtrar por fecha" id="dateFilter">
+       <option value="all">
+        Todas las fechas
+       </option>
+       <option value="today">
+        Hoy
+       </option>
+       <option value="yesterday">
+        Ayer
+       </option>
+      </select>
+     </label>
+    </div>
+    <div aria-label="Filtrar pedidos por estado" class="tabs" role="tablist">
+     <button class="tab active" data-status="Todos">
+      Todos
+      <span>
+       12
+      </span>
+     </button>
+     <button class="tab" data-status="En proceso">
+      En proceso
+      <span>
+       4
+      </span>
+     </button>
+     <button class="tab" data-status="Listo">
+      Listos
+      <span>
+       3
+      </span>
+     </button>
+     <button class="tab" data-status="Entregado">
+      Entregados
+      <span>
+       5
+      </span>
+     </button>
+     <button class="tab" data-status="Cancelado">
+      Cancelados
+      <span>
+       1
+      </span>
+     </button>
+    </div>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Pedido
+        </th>
+        <th>
+         Cliente
+        </th>
+        <th>
+         Productos
+        </th>
+        <th>
+         Hora
+        </th>
+        <th>
+         Total
+        </th>
+        <th>
+         Estado
+        </th>
+        <th>
+        </th>
+       </tr>
+      </thead>
+      <tbody id="orders">
+      </tbody>
+     </table>
+     <div class="empty" hidden="" id="empty">
+      No encontramos pedidos con esos filtros.
+     </div>
+    </div>
+    <div class="table-footer">
+     <span id="resultCount">
+      Mostrando pedidos
+     </span>
+     <div class="pagination" id="pagination">
+      <button aria-label="P&aacute;gina anterior" class="page-arrow" data-page="prev">
+       &lsaquo;
+      </button>
+      <button class="page-number active" data-page="1">
+       1
+      </button>
+      <button class="page-number" data-page="2">
+       2
+      </button>
+      <button class="page-number" data-page="3">
+       3
+      </button>
+      <button aria-label="P&aacute;gina siguiente" class="page-arrow" data-page="next">
+       &rsaquo;
+      </button>
+     </div>
+    </div>
+   </section>
+   <footer>
+    Hecho con
+    <span>
+     &hearts;
+    </span>
+    para Bloom Caf&eacute;
+    <b>
+     &bull;
+    </b>
+    2026
+   </footer>
+  </main>
+    <script src="{% static "js/pedidos.js" %}"></script>
+
+ </body>
+</html>

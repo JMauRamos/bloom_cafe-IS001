@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Dashboard | Bloom Caf&eacute;</title>
+        <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+    </head>
+    <body>
+        <header class="topbar">
+            <a class="brand" href="{%url 'dashboard' %}">
+                <img alt="Bloom Caf&eacute;" src="{% static "images/Logo.jpeg" %}"/>
+                <span>Panel administrativo</span>
+            </a>
+            <div class="user">
+                <span class="avatar">A</span>
+                <span>Administrador</span>
+                <span class="chevron">⌄</span>
+            </div>
+        </header>
+    <aside class="sidebar">
+        <div class="side-label">MEN&Uacute;</div>
+        <nav>
+            <a class="active" href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
+            <a href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
+            <a href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
+            <a href="#reportes"><span>▥</span>Reportes</a>
+        </nav>
+        <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
+    </aside>
+    <main class="main">
+        <div class="welcome">
+            <div>
+                <p class="eyebrow">MI&Eacute;RCOLES, 7 DE OCTUBRE DE 2026</p>
+                <h1>&iexcl;Buen d&iacute;a! ☀️</h1>
+                <p class="sub">Aqu&iacute; tienes el resumen de tu cafeter&iacute;a.</p>
+            </div>
+            <a class="button primary" href="{%url 'productos_admin' %}">＋ Ver pedidos</a>
+        </div>
+        <section aria-label="Resumen del d&iacute;a" class="stats">
+            <article class="stat">
+                <div class="stat-top">
+                    <span>Pedidos hoy</span>
+                    <span class="icon green">▤</span>
+                </div>
+                <strong>12</strong>
+                <small class="positive">&uarr; 3<span>vs. ayer</span></small>
+            </article>
+            <article class="stat">
+                <div class="stat-top">
+                    <span>Productos vendidos</span>
+                    <span class="icon peach">♧</span>
+                </div>
+                <strong>36</strong>
+                <small class="positive">&uarr; 8 <span>vs. ayer</span> </small>
+            </article>
+            <article class="stat">
+                <div class="stat-top">
+                    <span>Ventas del d&iacute;a</span><span class="icon yellow">$</span>
+                </div>
+                <strong>$1,250</strong> <small class="positive"> &uarr; 12% <span> vs. ayer </span> </small>
+            </article>
+            <article class="stat">
+                <div class="stat-top">
+                    <span>Stock bajo</span> <span class="icon pink"> ⬡ </span>
+                </div>
+                <strong> 3 </strong>
+                <small class="warning"> Requieren atenci&oacute;n </small>
+            </article>
+        </section>
+        <section class="content-grid">
+            <article class="panel recent">
+                <div class="panel-head">
+                    <div>
+                        <h2> Pedidos recientes </h2>
+                        <p> Actividad de hoy</p>
+                    </div>
+                    <a class="text-link" href="{%url 'productos_admin' %}">Ver todos &rarr;</a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                            <th>
+                            #
+                            </th>
+                            <th>
+                            Producto
+                            </th>
+                            <th>
+                            Hora
+                            </th>
+                            <th>
+                            Estado
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>
+                            001
+                            </td>
+                            <td>
+                            <span class="product-dot coffee">
+                            ●
+                            </span>
+                            Latte
+                            </td>
+                            <td>
+                            10:00
+                            </td>
+                            <td>
+                            <span class="status delivered">
+                            Entregado
+                            </span>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                            002
+                            </td>
+                            <td>
+                            <span class="product-dot pastry">
+                            ●
+                            </span>
+                            Croissant
+                            </td>
+                            <td>
+                            10:15
+                            </td>
+                            <td>
+                            <span class="status process">
+                            En proceso
+                            </span>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                            003
+                            </td>
+                            <td>
+                            <span class="product-dot tea">
+                            ●
+                            </span>
+                            Americano
+                            </td>
+                            <td>
+                            10:30
+                            </td>
+                            <td>
+                            <span class="status delivered">
+                            Entregado
+                            </span>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                            004
+                            </td>
+                            <td>
+                            <span class="product-dot matcha">
+                            ●
+                            </span>
+                            Matcha Latte
+                            </td>
+                            <td>
+                            11:00
+                            </td>
+                            <td>
+                            <span class="status process">
+                            En proceso
+                            </span>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                            005
+                            </td>
+                            <td>
+                            <span class="product-dot cake">
+                            ●
+                            </span>
+                            Cheesecake
+                            </td>
+                            <td>
+                            11:20
+                            </td>
+                            <td>
+                            <span class="status delivered">
+                            Entregado
+                            </span>
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a class="mobile-link" href="{%url 'productos_admin' %}"> Ver todos los pedidos &rarr;</a>
+            </article>
+            <article class="panel best">
+                <div class="panel-head">
+                    <div>
+                        <h2>Productos m&aacute;s vendidos</h2>
+                        <p>Esta semana</p>
+                    </div>
+                    <button class="select" id="period">Esta semana⌄</button>
+                </div>
+                <div aria-label="Gr&aacute;fica de productos m&aacute;s vendidos" class="chart">
+                    <div class="y-labels">
+                        <span>40</span>
+                        <span>30</span>
+                        <span>20</span>
+                        <span>10</span>
+                        <span>0</span>
+                    </div>
+                    <div class="plot">
+                        <div class="gridlines">
+                            <i>
+                            </i>
+                            <i>
+                            </i>
+                            <i>
+                            </i>
+                            <i>
+                            </i>
+                            <i>
+                            </i>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="--h:88%"></div>
+                            <span>Latte</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="--h:69%"></div>
+                            <span>Capuccino</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="--h:51%"></div>
+                            <span>Americano</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="--h:36%"></div>
+                            <span>Croissant</span>
+                        </div>
+                        <div class="bar-col">
+                            <div class="bar" style="--h:25%"></div>
+                            <span>Matcha</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-note">
+                    <span class="legend-dot"></span>
+                    Unidades vendidas
+                </div>
+            </article>
+        </section>
+        <footer>
+            Hecho con<span>&hearts;</span> para Bloom Caf&eacute; <b> &bull; </b>2026
+        </footer>
+    </main>
+    <script src="{% static "js/dashboard.js" %}"></script>
+    </body>
+</html>

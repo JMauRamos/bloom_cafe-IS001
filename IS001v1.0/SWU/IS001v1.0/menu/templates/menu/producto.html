@@ -1,6 +1,11 @@
 {% extends "base_clientes.html" %}
+{% load static %}
 
 {% block title %} Menu {% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/producto.css' %}">
+{% endblock %}
 
 {% block content %}
 
@@ -12,56 +17,39 @@
 
             <!-- NOMBRE Y PRECIO -->
             <div class="titulo-precio">
-                <h2>Latte</h2>
-                <span id="precio">$70</span>
+                <h2>{{producto.nombre}}</h2>
+                <span id="precio">{{producto.precio}}</span>
             </div>
 
-            <p class="descripcion">
-                Delicioso café latte preparado con espresso
-                y leche cremosa.
-            </p>
+            <p class="descripcion">{{producto.descripcion}}</p>
+
             <hr>
             <!-- TAMAÑO -->
 
             <h3>Tamaño</h3>
             <div class="tamanos">
-                <button onclick="seleccionarTamano(60, this)">
-                    Chico
-                    <span>$60</span>
-                </button>
-
-                <button class="seleccionado" onclick="seleccionarTamano(70, this)">
-                    Mediano
-                    <span>$70</span>
-                </button>
-
-                <button onclick="seleccionarTamano(80, this)">
-                    Grande
-                    <span>$80</span>
-                </button>
+                {% for variante in variantes %}
+                    <button onclick="seleccionarTamano({{ variante.precio }}, this)">
+                        {{variante.tamaño}}
+                        <span>${{variante.precio}}</span>
+                    </button>
+                {% endfor %}
             </div>
 
             <!-- EXTRAS -->
 
-            <h3>Extras</h3>
-            <label class="extra">
-                <input type="checkbox" value="10" onchange="actualizarPrecio()">
-                <span>Leche de almendra</span>
-                <b>+$10</b>
-            </label>
-
-
-            <label class="extra">
-                <input type="checkbox" value="10" onchange="actualizarPrecio()">
-                <span>Vainilla</span>
-                <b>+$10</b>
-            </label>
-
-            <label class="extra">
-                <input type="checkbox" value="10" onchange="actualizarPrecio()">
-                <span>Crema batida</span>
-                <b>+$10</b>
-            </label>
+            {% if producto.categoria.nombre == 'Jugos' or producto.categoria.nombre == 'Smoothies' %}
+                <h3>Extras</h3>
+                {% for ingrediente in producto.ingredientes.all %}
+                    {% if ingrediente.costo_extra > 0 %}
+                    <label class="extra">
+                        <input type="checkbox" value="{{ ingrediente.costo_extra }}" onchange="actualizarPrecio()">
+                        <span>{{ ingrediente.nombre }}</span>
+                        <b>+${{ ingrediente.costo_extra }}</b>
+                    </label>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
 
             <!-- CANTIDAD -->
 

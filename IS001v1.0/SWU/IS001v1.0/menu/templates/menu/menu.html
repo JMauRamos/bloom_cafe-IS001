@@ -22,76 +22,30 @@
         </div>
         <div class="categorias">
             <button class="categoria activa" data-categoria="todos">Todos</button>
-            <button class="categoria" data-categoria="jugo">Jugos</button>
-            <button class="categoria" data-categoria="smoothie">Smoothies</button>
-            <button class="categoria" data-categoria="hidratacion">Hidratacion y Boost</button>
-            <button class="categoria" data-categoria="cafe">Cafe y Energia</button>
-            <button class="categoria" data-categoria="sandwich">Sandwiches</button>
+            {% for categoria in categorias %}
+                <button class="categoria" data-categoria="{{categoria.nombre}}">{{categoria.nombre}}</button>
+            {% endfor %}
         </div>
         <div id="productos_menu">
-            <div class="producto" data-categoria="jugo">
-                <img src="" alt="Imagen Producto">
-                <div class="info_producto">
-                    <h3>Detox</h3>
-                    <div class="info_comprar">
-                        <div class="precios">
-                            <p>Chico: $65</p>
-                            <p>Grande: $100</p>
+            {% for categoria in categorias %}
+                <h2>{{ categoria.nombre }}</h2>
+                {% for producto in categoria.productos.all %}
+                    <div class="producto" data-categoria="{{ categoria.nombre }}">
+                        <img src="" alt="Imagen Producto">
+                        <div class="info_producto">
+                            <h3>{{ producto.nombre }}</h3>
+                            <div class="info_comprar">
+                                <div class="precios">
+                                    <p>$ {{ producto.precio }}</p>
+                                </div>
+                                <a class="comprar" href="{%url 'ver_producto' producto.id%}">Agregar</a>
+                            </div>
                         </div>
-                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
                     </div>
-                </div>
-            </div>
-            <div class="producto" data-categoria="smoothie">
-                <img src="" alt="Imagen Producto">
-                <div class="info_producto">
-                    <h3>Red Velvet</h3>
-                    <div class="info_comprar">
-                        <div class="precios">
-                            <p>Chico: $95</p>
-                            <p>Grande: $135</p>
-                        </div>
-                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
-                    </div>
-                </div>
-            </div>
-            <div class="producto" data-categoria="hidratacion">
-                <img src="" alt="Imagen Producto">
-                <div class="info_producto">
-                    <h3>Suero Natural</h3>
-                    <div class="info_comprar">
-                        <div class="precios">
-                            <p>Precio: $40</p>
-                        </div>
-                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
-                    </div>
-                </div>
-            </div>
-            <div class="producto" data-categoria="cafe">
-                <img src="" alt="Imagen Producto">
-                <div class="info_producto">
-                    <h3>Latte</h3>
-                    <div class="info_comprar">
-                        <div class="precios">
-                            <p>Precio: $70</p>
-                        </div>
-                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
-                    </div>
-                </div>
-            </div>
-            <div class="producto" data-categoria="sandwich">
-                <img src="" alt="Imagen Producto">
-                <div class="info_producto">
-                    <h3>Sandwich de Jamon de Pavo y Queso</h3>
-                    <div class="info_comprar">
-                        <div class="precios">
-                            <p>Precio: $95</p>
-                        </div>
-                        <a class="comprar" href="{%url 'ver_producto' %}">Agregar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    {% empty %}
+                    <br>
+                {% endfor %}
+            {% endfor %}
     </section>
 </main>
 

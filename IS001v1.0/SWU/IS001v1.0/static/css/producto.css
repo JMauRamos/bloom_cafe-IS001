@@ -1,0 +1,295 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --verde: #3ca606;
+    --verde-oscuro: #2d8504;
+    --verde-claro: #eef8e9;
+    --gris-fondo: #f5f6f4;
+    --gris-borde: #dddddd;
+    --texto: #222222;
+}
+
+/* APP */
+
+.app {
+    width: min(90%, 900px);
+    min-height: 100vh;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+}
+
+/* CONTENIDO */
+
+main {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 35px) clamp(16px, 5vw, 40px) 45px;
+}
+
+/* IMAGEN */
+
+.producto-imagen {
+    width: 100%;
+    height: clamp(180px, 35vw, 300px);
+    margin-bottom: 22px;
+    border: 2px solid var(--verde);
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: #eee;
+    box-shadow: 0 8px 20px rgba(45, 133, 4, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.producto-imagen:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(45, 133, 4, 0.20);
+}
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.producto-imagen:hover img {
+    transform: scale(1.06);
+}
+
+/* NOMBRE Y PRECIO */
+
+.titulo-precio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.titulo-precio h2 {
+    font-size: clamp(22px, 3.5vw, 30px);
+    overflow-wrap: anywhere;
+}
+
+.titulo-precio span {
+    flex-shrink: 0;
+    font-size: clamp(19px, 3vw, 25px);
+    font-weight: bold;
+    color: var(--verde);
+}
+
+.descripcion {
+    margin-top: 8px;
+    font-size: 15px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* LINEA */
+
+.app hr {
+    border: none;
+    border-top: 1px solid var(--gris-borde);
+    margin: 25px 0;
+}
+
+/* TITULOS */
+
+h3 {
+    font-size: 17px;
+    margin: 18px 0 12px;
+}
+
+/* TAMAÑOS */
+
+.tamanos {
+    display: flex;
+    gap: clamp(6px, 1.5vw, 12px);
+    width: 100%;
+}
+
+.tamanos button {
+    flex: 1;
+    height: 78px;
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tamanos button:hover {
+    border-color: var(--verde);
+    background-color: var(--verde-claro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(60, 166, 6, 0.12);
+}
+
+.tamanos button span {
+    display: block;
+    margin-top: 7px;
+    font-size: 14px;
+    color: #555;
+}
+.tamanos button.seleccionado {
+    border: 2px solid var(--verde-oscuro);
+    background-color: var(--verde-claro);
+    color: var(--verde-oscuro);
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(45, 133, 4, 0.20);
+    transform: translateY(-2px);
+}
+
+.tamanos button.seleccionado span {
+    color: var(--verde-oscuro);
+    font-weight: bold;
+}
+
+/* EXTRAS */
+
+.extra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.extra:hover {
+    background-color: var(--verde-claro);
+}
+
+.extra input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--verde);
+    cursor: pointer;
+}
+
+.extra span {
+    flex: 1;
+}
+
+.extra b {
+    color: var(--verde);
+    font-weight: bold;
+}
+
+/* CANTIDAD */
+
+.cantidad_compra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+}
+
+.cantidad_compra h3 {
+    margin: 0;
+}
+
+.contador {
+    display: flex;
+    height: 44px;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.contador button {
+    width: 44px;
+    border: none;
+    background-color: white;
+    color: var(--verde);
+    font-size: 23px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.contador button:hover {
+    background-color: var(--verde-claro);
+}
+
+.contador span {
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #aaa;
+    border-right: 1px solid #aaa;
+    font-weight: bold;
+}
+
+/* BOTON AGREGAR */
+
+.agregar {
+    width: 100%;
+    height: 55px;
+    margin-top: 28px;
+    background-color: var(--verde);
+    color: white;
+    border: 2px solid var(--verde);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 12px rgba(60, 166, 6, 0.2);
+}
+
+.agregar:hover {
+    background-color: var(--verde-oscuro);
+    border-color: var(--verde-oscuro);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(60, 166, 6, 0.28);
+}
+
+.agregar:active {
+    transform: translateY(0);
+}
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+    .app {
+        width: 100%;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .producto-imagen {
+        height: 220px;
+    }
+
+    .titulo-precio h2 {
+        font-size: 25px;
+    }
+
+    .titulo-precio span {
+        font-size: 21px;
+    }
+
+    .tamanos {
+        gap: 8px;
+    }
+
+    .tamanos button {
+        height: 68px;
+        font-size: 13px;
+    }
+}

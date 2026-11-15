@@ -29,7 +29,7 @@ class Producto(models.Model):
     disponibilidad = models.BooleanField(default=True)
     precio = models.DecimalField(max_digits=8, decimal_places=2)
     foto_producto = models.ImageField(upload_to='productos/', blank=True, null='True')
-    categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
+    categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='productos')
     ingredientes = models.ManyToManyField(Ingrediente)
 
     def __str__(self):

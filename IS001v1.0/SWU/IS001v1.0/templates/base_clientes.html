@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloom Café - {% block title %} {% endblock %}</title>
-    <link rel="stylesheet" href="{% static "css/style_clientes.css" %}">
-    <link rel="stylesheet" href="{% static "css/historial.css" %}">
+    <link rel="stylesheet" href="{% static 'css/style_clientes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+    {% block styles %} {% endblock %}
     <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
 </head>
 <body>
@@ -107,6 +108,7 @@
     <footer>
         <script src="{% static "js/abrirMenu.js" %}"></script>
         <script src="{% static "js/abrirCarrito.js" %}"></script>
+        {% block scripts %} {% endblock %}
     </footer>
 </body>
 </html>

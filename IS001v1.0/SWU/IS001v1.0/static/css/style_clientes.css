@@ -370,6 +370,25 @@ nav .bi:hover {
     color: var(--verde);
 }
 
+.categoria_grupo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(95%, 600px);
+    margin-bottom: 2rem;
+}
+
+.titulo_categoria {
+    width: 100%;
+    text-align: left;
+    font-size: 2rem;
+    color: var(--verde);
+    margin-bottom: 1rem;
+    border-bottom: 3px solid var(--verde);
+    padding-bottom: 0.5rem;
+    box-sizing: border-box;
+}
+
 .categorias {
     display: flex;
     justify-content: center;
@@ -451,7 +470,7 @@ nav .bi:hover {
     display: flex;
     align-items: center;
     gap: 1rem;
-    width: min(95%, 600px);
+    width: 100%;
     min-height: 200px;
     height: auto;
     padding: 1rem;

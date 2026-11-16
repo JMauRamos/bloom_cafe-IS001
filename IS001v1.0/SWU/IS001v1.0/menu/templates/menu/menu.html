@@ -29,34 +29,35 @@
         </div>
         <div id="productos_menu">
             {% for categoria in categorias %}
+                <div class="categoria_grupo" data-categoria="{{ categoria.nombre }}">
                 <h2 class="titulo_categoria">{{ categoria.nombre }}</h2>
-                {% for producto in categoria.productos.all %}
-                    <div class="producto" data-categoria="{{ categoria.nombre }}">
-                        {% if producto.foto_producto %}
-                            <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
-                        {% else %}
-                            <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
-                        {% endif %}
-                        <div class="info_producto">
-                            <h3>{{ producto.nombre }}</h3>
-                            <div class="info_comprar">
-                                <div class="precios">
-                                    <p>$ {{ producto.precio }}</p>
+                    {% for producto in categoria.productos.all %}
+                        <div class="producto" data-categoria="{{ categoria.nombre }}">
+                            {% if producto.foto_producto %}
+                                <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
+                            {% else %}
+                                <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
+                            {% endif %}
+                            <div class="info_producto">
+                                <h3>{{ producto.nombre }}</h3>
+                                <div class="info_comprar">
+                                    <div class="precios">
+                                        <p>$ {{ producto.precio }}</p>
+                                    </div>
+                                    <a class="comprar" href="{%url 'ver_producto' producto.id%}">Agregar</a>
                                 </div>
-                                <a class="comprar" href="{%url 'ver_producto' producto.id%}">Agregar</a>
                             </div>
                         </div>
-                    </div>
-                    {% empty %}
-                    <br>
-                {% endfor %}
+                        {% empty %}
+                        <br>
+                    {% endfor %}
+                </div>
             {% endfor %}
     </section>
 </main>
 
 {% block scripts %}
-    <script src="{% static "js/buscarProducto.js" %}"></script>
-    <script src="{% static "js/filtrarProductos.js" %}"></script>
+    <script src="{% static "js/filtrarMenu.js" %}"></script>
 {% endblock %}
 
 {% endblock %}

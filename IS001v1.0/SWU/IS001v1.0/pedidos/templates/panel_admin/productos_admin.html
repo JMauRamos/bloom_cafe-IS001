@@ -1,32 +1,13 @@
+{% extends "base_empleados.html" %}
 {% load static %}
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gestión de productos | Bloom Café</title>
-    <link rel="stylesheet" href="{% static "css/productos.css" %}">
-  </head>
-  <body>
-    <header class="topbar">
-      <a class="brand" href="dashboard.html">
-        <img src="{% static "images/Logo.jpeg" %}" alt="Bloom Café">
-        <span>Panel administrativo</span>
-      </a>
-      <div class="user"><span class="avatar">A</span><span>Administrador</span><span class="chevron">⌄</span></div>
-    </header>
 
-    <aside class="sidebar">
-      <div class="side-label">MENÚ</div>
-      <nav>
-        <a href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
-        <a href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
-        <a class="active" href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
-        <a href="#reportes"><span>▥</span>Reportes</a>
-      </nav>
-      <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
-    </aside>
+{% block title %} Gestión de Productos {% endblock %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{% static "css/productos.css/" %}">
+{% endblock %}
+
+    {% block contenido %}
     <main class="main">
       <div class="page-heading">
         <div>
@@ -69,10 +50,10 @@
         </div>
         <div class="table-footer"><span id="tableCount">Mostrando 5 productos</span><span class="updated-note">Los cambios se aplican a este catálogo</span></div>
       </section>
-
-      <footer>Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026</footer>
     </main>
+    {% endblock %}
 
+    {% block modal %}
     <dialog class="product-dialog" id="productDialog">
       <form id="productForm" method="dialog">
         <div class="dialog-heading">
@@ -90,6 +71,10 @@
         <div class="dialog-actions"><button class="button secondary" type="button" id="cancelDialog">Cancelar</button><button class="button primary" type="submit">Guardar producto</button></div>
       </form>
     </dialog>
-        <script src="{% static "js/productos.js" %}"></script>
+    {% endblock %}
+
+    {% block script %}
+      <script src="{% static "js/productos.js" %}"></script>
+    {% endblock %}
   </body>
 </html>

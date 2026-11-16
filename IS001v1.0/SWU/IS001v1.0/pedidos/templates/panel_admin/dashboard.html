@@ -1,34 +1,13 @@
+{% extends "base_empleados.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="utf-8"/>
-        <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Dashboard | Bloom Caf&eacute;</title>
-        <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
-    </head>
-    <body>
-        <header class="topbar">
-            <a class="brand" href="{%url 'dashboard' %}">
-                <img alt="Bloom Caf&eacute;" src="{% static "images/Logo.jpeg" %}"/>
-                <span>Panel administrativo</span>
-            </a>
-            <div class="user">
-                <span class="avatar">A</span>
-                <span>Administrador</span>
-                <span class="chevron">⌄</span>
-            </div>
-        </header>
-    <aside class="sidebar">
-        <div class="side-label">MEN&Uacute;</div>
-        <nav>
-            <a class="active" href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
-            <a href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
-            <a href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
-            <a href="#reportes"><span>▥</span>Reportes</a>
-        </nav>
-        <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
-    </aside>
+
+{% block title %} Dashboard {% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+{% endblock %}
+
+    {% block contenido %}
     <main class="main">
         <div class="welcome">
             <div>
@@ -63,7 +42,7 @@
             </article>
             <article class="stat">
                 <div class="stat-top">
-                    <span>Stock bajo</span> <span class="icon pink"> ⬡ </span>
+                    <span>Ingredientes sin stock</span> <span class="icon pink"> ⬡ </span>
                 </div>
                 <strong> 3 </strong>
                 <small class="warning"> Requieren atenci&oacute;n </small>
@@ -82,58 +61,30 @@
                     <table>
                         <thead>
                             <tr>
-                            <th>
-                            #
-                            </th>
-                            <th>
-                            Producto
-                            </th>
-                            <th>
-                            Hora
-                            </th>
-                            <th>
-                            Estado
-                            </th>
+                                <th> # </th>
+                                <th> Producto </th>
+                                <th> Hora </th>
+                                <th> Estado </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                            <td>
-                            001
-                            </td>
-                            <td>
-                            <span class="product-dot coffee">
-                            ●
-                            </span>
-                            Latte
-                            </td>
-                            <td>
-                            10:00
-                            </td>
-                            <td>
-                            <span class="status delivered">
-                            Entregado
-                            </span>
-                            </td>
+                                <td> 001 </td>
+                                <td>
+                                    <span class="product-dot coffee"> ● </span>
+                                    Latte
+                                </td>
+                                <td> 10:00 </td>
+                                <td> <span class="status delivered"> Entregado </span> </td>
                             </tr>
                             <tr>
-                            <td>
-                            002
-                            </td>
-                            <td>
-                            <span class="product-dot pastry">
-                            ●
-                            </span>
-                            Croissant
-                            </td>
-                            <td>
-                            10:15
-                            </td>
-                            <td>
-                            <span class="status process">
-                            En proceso
-                            </span>
-                            </td>
+                                <td> 002 </td>
+                                <td>
+                                    <span class="product-dot pastry"> ● </span>
+                                    Croissant
+                                </td>
+                                <td> 10:15 </td>
+                                <td> <span class="status process"> En proceso </span> </td>
                             </tr>
                             <tr>
                             <td>
@@ -254,10 +205,12 @@
                 </div>
             </article>
         </section>
-        <footer>
-            Hecho con<span>&hearts;</span> para Bloom Caf&eacute; <b> &bull; </b>2026
-        </footer>
     </main>
-    <script src="{% static "js/dashboard.js" %}"></script>
+    {% endblock %}
+
+    {% block script%}
+        <script src="{% static "js/dashboard.js" %}"></script>
+    {% endblock %}
+    
     </body>
 </html>

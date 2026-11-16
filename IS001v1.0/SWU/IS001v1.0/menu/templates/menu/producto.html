@@ -11,9 +11,16 @@
 
     <div class="app">
             <!-- IMAGEN -->
-            <div class="producto-imagen">
-              <img src="/resources/latte.jpg" alt="Latte">
-            </div>
+
+            {% if producto.foto_producto %}
+                <div class="producto-imagen">
+                    <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
+                </div>
+            {% else %}
+                <div class="producto-imagen">
+                    <img src="{% static 'images/default.jpg' %}" alt="Sin imagen">
+                </div>
+            {% endif %}
 
             <!-- NOMBRE Y PRECIO -->
             <div class="titulo-precio">
@@ -29,7 +36,7 @@
             <h3>Tamaño</h3>
             <div class="tamanos">
                 {% for variante in variantes %}
-                    <button onclick="seleccionarTamano({{ variante.precio }}, this)">
+                    <button data-variante-id="{{ variante.id }}" data-precio="{{ variante.precio }}" onclick="seleccionarTamano({{ variante.precio }}, this)">
                         {{variante.tamaño}}
                         <span>${{variante.precio}}</span>
                     </button>
@@ -40,14 +47,12 @@
 
             {% if producto.categoria.nombre == 'Jugos' or producto.categoria.nombre == 'Smoothies' %}
                 <h3>Extras</h3>
-                {% for ingrediente in producto.ingredientes.all %}
-                    {% if ingrediente.costo_extra > 0 %}
+                {% for extra in extras %}
                     <label class="extra">
-                        <input type="checkbox" value="{{ ingrediente.costo_extra }}" onchange="actualizarPrecio()">
-                        <span>{{ ingrediente.nombre }}</span>
-                        <b>+${{ ingrediente.costo_extra }}</b>
+                        <input type="checkbox" value="{{ extra.costo_extra }}" class="extra-checkbox" data-ingrediente-id="{{ extra.id }}" data-precio-extra="{{ extra.costo_extra }}" onchange="actualizarPrecio()">
+                        <span>{{ extra.nombre }}</span>
+                        <b>+ ${{ extra.costo_extra }}</b>
                     </label>
-                    {% endif %}
                 {% endfor %}
             {% endif %}
 
@@ -64,7 +69,7 @@
 
             <!-- AGREGAR -->
 
-            <button type="submit" class="agregar" onclick="agregarAlCarrito()">
+            <button type="submit" class="agregar" data-producto-id="{{ producto.id }}" data-producto-nombre="{{ producto.nombre }}" data-producto-imagen="{% if producto.foto_producto %}{{ producto.foto_producto.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" onclick="agregarAlCarrito()">
                 Agregar al carrito
             </button>
     </div>

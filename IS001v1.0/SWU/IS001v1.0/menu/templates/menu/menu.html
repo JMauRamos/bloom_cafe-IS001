@@ -1,4 +1,5 @@
 {% extends "base_clientes.html" %}
+{% load static %}
 
 {% block title %} Menu {% endblock %}
 
@@ -28,10 +29,14 @@
         </div>
         <div id="productos_menu">
             {% for categoria in categorias %}
-                <h2>{{ categoria.nombre }}</h2>
+                <h2 class="titulo_categoria">{{ categoria.nombre }}</h2>
                 {% for producto in categoria.productos.all %}
                     <div class="producto" data-categoria="{{ categoria.nombre }}">
-                        <img src="" alt="Imagen Producto">
+                        {% if producto.foto_producto %}
+                            <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
+                        {% else %}
+                            <img src="{% static 'images/default.jpg' %}" alt="Sin imagen">
+                        {% endif %}
                         <div class="info_producto">
                             <h3>{{ producto.nombre }}</h3>
                             <div class="info_comprar">

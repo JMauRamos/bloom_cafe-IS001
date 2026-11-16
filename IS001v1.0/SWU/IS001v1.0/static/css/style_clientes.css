@@ -297,7 +297,7 @@ nav .bi:hover {
     justify-content: center;
     height: 70vh;
     min-height: 400px;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+    background-image: var(--degradado_verde);
     background-size: cover;
     background-position: center;
     text-align: center;
@@ -328,8 +328,8 @@ nav .bi:hover {
     font-weight: bold;
     margin: 0.5rem;
     font-size: 1.2rem;
-    color: white;
-    background-image: var(--degradado_verde);
+    color: var(--degradado_verde);
+    background-image: white;
     transition: 300ms ease;
 }
 

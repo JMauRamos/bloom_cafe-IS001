@@ -1,7 +1,7 @@
 {% extends "base_clientes.html" %}
 {% load static %}
 
-{% block title %} Menu {% endblock %}
+{% block title %} {{ producto.nombre }} {% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/producto.css' %}">
@@ -9,69 +9,78 @@
 
 {% block content %}
 
-    <div class="app">
-            <!-- IMAGEN -->
+<div class="app">
+    <!-- IMAGEN -->
 
-            {% if producto.foto_producto %}
-                <div class="producto-imagen">
-                    <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
-                </div>
-            {% else %}
-                <div class="producto-imagen">
-                    <img src="{% static 'images/default.jpg' %}" alt="Sin imagen">
-                </div>
-            {% endif %}
+    {% if producto.foto_producto %}
+        <div class="producto-imagen">
+            <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
+        </div>
+    {% else %}
+        <div class="producto-imagen">
+            <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
+        </div>
+    {% endif %}
 
-            <!-- NOMBRE Y PRECIO -->
-            <div class="titulo-precio">
-                <h2>{{producto.nombre}}</h2>
-                <span id="precio">{{producto.precio}}</span>
-            </div>
-
-            <p class="descripcion">{{producto.descripcion}}</p>
-
-            <hr>
-            <!-- TAMAÑO -->
-
-            <h3>Tamaño</h3>
-            <div class="tamanos">
-                {% for variante in variantes %}
-                    <button data-variante-id="{{ variante.id }}" data-precio="{{ variante.precio }}" onclick="seleccionarTamano({{ variante.precio }}, this)">
-                        {{variante.tamaño}}
-                        <span>${{variante.precio}}</span>
-                    </button>
-                {% endfor %}
-            </div>
-
-            <!-- EXTRAS -->
-
-            {% if producto.categoria.nombre == 'Jugos' or producto.categoria.nombre == 'Smoothies' %}
-                <h3>Extras</h3>
-                {% for extra in extras %}
-                    <label class="extra">
-                        <input type="checkbox" value="{{ extra.costo_extra }}" class="extra-checkbox" data-ingrediente-id="{{ extra.id }}" data-precio-extra="{{ extra.costo_extra }}" onchange="actualizarPrecio()">
-                        <span>{{ extra.nombre }}</span>
-                        <b>+ ${{ extra.costo_extra }}</b>
-                    </label>
-                {% endfor %}
-            {% endif %}
-
-            <!-- CANTIDAD -->
-
-            <div class="cantidad_compra">
-                <h3>Cantidad</h3>
-                <div class="contador">
-                    <button onclick="cambiarCantidad(-1)">−</button>
-                    <span id="num_contador">1</span>
-                    <button onclick="cambiarCantidad(1)">+</button>
-                </div>
-            </div>
-
-            <!-- AGREGAR -->
-
-            <button type="submit" class="agregar" data-producto-id="{{ producto.id }}" data-producto-nombre="{{ producto.nombre }}" data-producto-imagen="{% if producto.foto_producto %}{{ producto.foto_producto.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" onclick="agregarAlCarrito()">
-                Agregar al carrito
-            </button>
+    <!-- NOMBRE Y PRECIO -->
+    <div class="titulo-precio">
+        <h2>{{producto.nombre}}</h2>
+        <span>${{producto.precio}}</span>
     </div>
 
+    <p class="descripcion">{{producto.descripcion}}</p>
+
+    <hr>
+    <!-- TAMAÑO -->
+
+    <h3>Tamaño</h3>
+    <div class="tamanos">
+        {% for variante in variantes %}
+            <button data-variante-id="{{ variante.id }}" data-precio="{{ variante.precio }}" data-variante-nombre="{{ variante.tamaño }}" onclick="seleccionarVariante(this)">
+                {{variante.tamaño}}
+                <span>${{variante.precio}}</span>
+            </button>
+        {% endfor %}
+    </div>
+
+    <!-- EXTRAS -->
+
+    {% if producto.categoria.nombre == 'Jugos' or producto.categoria.nombre == 'Smoothies' %}
+        <h3>Extras</h3>
+        {% for extra in extras %}
+            <label class="extra">
+                <input type="checkbox" class="extra-checkbox" value="{{ extra.costo_extra }}" data-ingrediente-id="{{ extra.id }}" data-precio-extra="{{ extra.costo_extra }}" data-nombre="{{ extra.nombre }}" onchange="actualizarPrecio()">
+                <span>{{ extra.nombre }}</span>
+                <b>+ ${{ extra.costo_extra }}</b>
+            </label>
+        {% endfor %}
+    {% endif %}
+
+    <!-- CANTIDAD -->
+
+    <div class="cantidad_compra">
+        <h3>Cantidad</h3>
+        <div class="contador">
+            <button onclick="cambiarCantidad(-1)">−</button>
+            <span id="num_contador">1</span>
+            <button onclick="cambiarCantidad(1)">+</button>
+        </div>
+    </div>
+
+    <!-- AGREGAR -->
+
+    {% if producto.disponibilidad %}
+        <button type="submit" class="agregar" data-producto-id="{{ producto.id }}" data-producto-nombre="{{ producto.nombre }}" data-producto-imagen="{% if producto.foto_producto %}{{ producto.foto_producto.url }}{% else %}{% static 'images/Logo.jpeg' %}{% endif %}" onclick="agregarAlCarrito()">
+            Agregar al carrito - <span id="precio">${{producto.precio}}</span>
+        </button>
+    {% else %}
+        <button type="submit" class="agregar" disabled>
+            Producto no disponible D:</span>
+        </button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/productoDetalle.js' %}"></script>
 {% endblock %}

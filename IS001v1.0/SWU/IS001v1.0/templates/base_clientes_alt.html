@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom Café - {% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style_clientes.css' %}">
+    {% block styles %} {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
+</head>
+<body>
+    <header>
+        <div class="menu_abrir">
+            <div class="icono_cerrar">
+                <span><i id="cerrar_trigger" class="bi bi-x"></i></span>
+            </div>
+            <ul id="opciones_menu">
+                <li><a href="{%url 'inicio' %}"><i class="bi bi-house"></i>Inicio</a></li>
+                <li><a href="{%url 'menu_principal' %}"><i class="bi bi-fork-knife"></i>Menu</a></li>
+                <li><a href="{%url 'mis_pedidos' %}"><i class="bi bi-bag"></i>Mis Pedidos</a></li>
+            </ul>
+        </div>
+        <nav>
+            <span><i id="menu_trigger" class="bi bi-list"></i></span>
+            <div id="logo_nav">
+                <a href="{%url 'menu_principal' %}"><img id="logo" src="{% static "images/Logo.jpeg" %}" alt="Logo de Bloom Café"></a>
+            </div>
+            <span><a href="{%url 'menu_principal' %}"> <i class="bi bi-arrow-left"></i> </span></a>
+        </nav>
+    </header>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <script src="{% static "js/abrirMenu.js" %}"></script>
+        <script src="{% static 'js/carrito.js' %}"></script>
+        {% block scripts %} {% endblock %}
+    </footer>
+</body>
+</html>

@@ -1,4 +1,5 @@
-{% extends "base_clientes.html" %}
+{% extends "base_clientes_alt.html" %}
+{% load static %}
 
 {% block title %} Mi Carrito {% endblock %}
 
@@ -7,6 +8,7 @@
 <section id="main_carrito">
         <div id="detalles_compra">
             <form id="form_detalles" action="">
+                {% csrf_token %}
                 <div id="metodos_pago">
                     <h2>Metodo de Pago</h2>
                     <div class="opciones_detalles">
@@ -69,66 +71,20 @@
                 <span class="info_carrito">Mi Carrito</span>
             </section>
             <section class="productos_carrito">
-                <div class="producto_carrito">
-                    <img src="/resources/producto_temp.jpg" alt="Foto">
-                    <div class="desc_carrito">
-                        <div class="producto_precio">
-                            <p class="nombre_producto">Producto #1</p>
-                            <p><span class="precio_carrito">$00.00</span></p>
-                        </div>
-                        <p>Extras: <span class="extras_carrito">Listado de extras</span></p>
-                        <div class="editar_producto"> 
-                            <div class="cantidad_producto">
-                                <div class="mas_menos" id="menos">
-                                    <i class="bi bi-dash"></i>
-                                </div>
-                                <div>
-                                    <span class="cantidad">1</span>
-                                </div>
-                                <div class="mas_menos" id="mas">
-                                    <i class="bi bi-plus"></i>
-                                </div>
-                            </div>
-                            <div class="eliminar_producto">
-                                <i class="bi bi-trash-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="producto_carrito">
-                    <img src="/resources/producto_temp.jpg" alt="Foto">
-                    <div class="desc_carrito">
-                        <div class="producto_precio">
-                            <p class="nombre_producto">Producto #2</p>
-                            <p><span class="precio_carrito">$00.00</span></p>
-                        </div>
-                        <p>Extras: <span class="extras_carrito">Listado de extras</span></p>
-                        <div class="editar_producto"> 
-                            <div class="cantidad_producto">
-                                <div class="mas_menos" id="menos">
-                                    <i class="bi bi-dash"></i>
-                                </div>
-                                <div>
-                                    <span class="cantidad">2</span>
-                                </div>
-                                <div class="mas_menos" id="mas">
-                                    <i class="bi bi-plus"></i>
-                                </div>
-                            </div>
-                            <div class="eliminar_producto">
-                                <i class="bi bi-trash-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </section>
             <section id="bottom_carrito">
                 <div class="info_carrito">
                     <span>Total</span>
-                    <span>$00.00</span>
+                    <span id="total_carrito">$00.00</span>
                 </div>
             </section>
         </div>
     </section>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/productoDetalle.js' %}"></script>
+    <script src="{% static 'js/checkout.js' %}"></script>
 {% endblock %}

@@ -29,8 +29,12 @@ class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)
     variante_producto = models.ForeignKey('menu.VarianteProducto', on_delete=models.PROTECT)
     cantidad = models.IntegerField()
+    precio_unitario = models.DecimalField(max_digits=8, decimal_places=2)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     notas_extra = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.cantidad}x {self.variante_producto} (Pedido #{self.pedido.id})"
 
 class Modificacion(models.Model):
     ACCIONES = [('AGREGAR', 'Agregar'), ('REMOVER', 'Remover')]

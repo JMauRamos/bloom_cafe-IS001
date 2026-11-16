@@ -1,7 +1,7 @@
 let varianteSeleccionada = null;
 let cantidadActual = 1;
 
-function seleccionarTamano(boton) {
+function seleccionarVariante(boton) {
 
     document.querySelectorAll('.tamanos button').forEach(b => b.classList.remove('seleccionado'));
     
@@ -9,7 +9,8 @@ function seleccionarTamano(boton) {
     
     varianteSeleccionada = {
         id: boton.dataset.varianteId,
-        precio: parseFloat(boton.dataset.precio)
+        precio: parseFloat(boton.dataset.precio),
+        nombre: boton.dataset.varianteNombre
     };
     
     actualizarPrecio();
@@ -47,7 +48,8 @@ function agregarAlCarrito() {
     document.querySelectorAll('.extra-checkbox:checked').forEach(checkbox => {
         extrasSeleccionados.push({
             ingrediente_id: checkbox.dataset.ingredienteId,
-            precio_extra: parseFloat(checkbox.dataset.precioExtra)
+            precio_extra: parseFloat(checkbox.dataset.precioExtra),
+            nombre: checkbox.dataset.nombre
         });
     });
     
@@ -57,6 +59,7 @@ function agregarAlCarrito() {
         producto_imagen: botonAgregar.dataset.productoImagen,
         variante_id: varianteSeleccionada.id,
         variante_precio: varianteSeleccionada.precio,
+        variante_nombre: varianteSeleccionada.nombre,
         extras: extrasSeleccionados,
         cantidad: cantidadActual,
         subtotal: (varianteSeleccionada.precio + extrasSeleccionados.reduce((sum, e) => sum + e.precio_extra, 0)) * cantidadActual
@@ -86,6 +89,6 @@ function agregarAlCarrito() {
 document.addEventListener('DOMContentLoaded', () => {
     const primerBoton = document.querySelector('.tamanos button');
     if (primerBoton) {
-        seleccionarTamano(primerBoton);
+        seleccionarVariante(primerBoton);
     }
 });

@@ -1,6 +1,12 @@
 {% extends "base_clientes.html" %}
+{% load static %}
+
 
 {% block title %} Mis Pedidos {% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+{% endblock %}
 
 {% block content %}
 
@@ -26,4 +32,8 @@
 
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/buscarPedidos.js' %}"></script>
 {% endblock %}

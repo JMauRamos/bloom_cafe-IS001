@@ -8,7 +8,7 @@
 <main id="menu">
     <section id="hero">
         <div id="contenido_hero">
-            <h1>Texto Pendiente</h1>
+            <h1>Nuestros Productos</h1>
             <div id="boton_hero">
                 <a href="#menu_principal">Ver Menu</a>
             </div>
@@ -35,7 +35,7 @@
                         {% if producto.foto_producto %}
                             <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
                         {% else %}
-                            <img src="{% static 'images/default.jpg' %}" alt="Sin imagen">
+                            <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
                         {% endif %}
                         <div class="info_producto">
                             <h3>{{ producto.nombre }}</h3>
@@ -53,5 +53,10 @@
             {% endfor %}
     </section>
 </main>
+
+{% block scripts %}
+    <script src="{% static "js/buscarProducto.js" %}"></script>
+    <script src="{% static "js/filtrarProductos.js" %}"></script>
+{% endblock %}
 
 {% endblock %}

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloom Café - {% block title %} {% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style_clientes.css' %}">
-    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
     {% block styles %} {% endblock %}
     <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
 </head>
@@ -39,7 +38,7 @@
                 </section>
                 <section class="productos_carrito">
                     <div class="producto_carrito">
-                        <img src="/resources/producto_temp.jpg" alt="Foto">
+                        <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
                         <div class="desc_carrito">
                             <div class="producto_precio">
                                 <p class="nombre_producto">Producto #1</p>
@@ -63,36 +62,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="producto_carrito">
-                        <img src="/resources/producto_temp.jpg" alt="Foto">
-                        <div class="desc_carrito">
-                            <div class="producto_precio">
-                                <p class="nombre_producto">Producto #2</p>
-                                <p><span class="precio_carrito">$00.00</span></p>
-                            </div>
-                            <div class="editar_producto"> 
-                                <div class="cantidad_producto">
-                                    <div class="mas_menos" id="menos">
-                                        <i class="bi bi-dash"></i>
-                                    </div>
-                                    <div>
-                                        <span class="cantidad">2</span>
-                                    </div>
-                                    <div class="mas_menos" id="mas">
-                                        <i class="bi bi-plus"></i>
-                                    </div>
-                                </div>
-                                <div class="eliminar_producto">
-                                    <i class="bi bi-trash-fill"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
                 <section id="bottom_carrito">
                     <div class="info_carrito">
                         <span>Total</span>
-                        <span>$00.00</span>
+                        <span id="total_carrito">$00.00</span>
                     </div>
                     <a href="{%url 'checkout' %}">Ir a Pagar</a>
                 </section>
@@ -108,6 +82,7 @@
     <footer>
         <script src="{% static "js/abrirMenu.js" %}"></script>
         <script src="{% static "js/abrirCarrito.js" %}"></script>
+        <script src="{% static 'js/carrito.js' %}"></script>
         {% block scripts %} {% endblock %}
     </footer>
 </body>

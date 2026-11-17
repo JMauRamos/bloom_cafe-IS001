@@ -23,9 +23,9 @@
     <aside class="sidebar">
       <div class="side-label">MENÚ</div>
       <nav>
-        <a href="{%url 'dashboard' %}"><span>▦</span>Inicio</a>
-        <a href="{%url 'pedidos_admin' %}"><span>▤</span>Pedidos<i class="badge">7</i></a>
-        <a class="active" href="{%url 'productos_admin' %}"><span>♧</span>Productos</a>
+        <a href="{%url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"><span>▦</span>Inicio</a>
+        <a href="{%url 'pedidos_admin' %}" class="{% if request.resolver_match.url_name == 'pedidos_admin' %}active{% endif %}"><span>▤</span> Pedidos {% if pedidos_pendientes_count > 0 %} <i class="badge"> {{ pedidos_pendientes_count }} </i> {% endif %} </a>
+        <a href="{%url 'productos_admin' %}" class="{% if 'producto' in request.resolver_match.url_name %}active{% endif %}"><span>♧</span>Productos</a>
         <a href="#reportes"><span>▥</span>Reportes</a>
       </nav>
       <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
@@ -38,9 +38,10 @@
     {% endblock %}
 
     <footer>Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026
-      {% block scripts %}
-      {% endblock %}
     </footer>
+
+    {% block scripts %}
+    {% endblock %}
     
   </body>
 </html>

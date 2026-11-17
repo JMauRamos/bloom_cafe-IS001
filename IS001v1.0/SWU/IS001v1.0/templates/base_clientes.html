@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloom Café - {% block title %} {% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style_clientes.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     {% block styles %} {% endblock %}
     <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
 </head>
@@ -80,6 +83,7 @@
     </main>
 
     <footer>
+        Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026
         <script src="{% static "js/abrirMenu.js" %}"></script>
         <script src="{% static "js/abrirCarrito.js" %}"></script>
         <script src="{% static 'js/carrito.js' %}"></script>

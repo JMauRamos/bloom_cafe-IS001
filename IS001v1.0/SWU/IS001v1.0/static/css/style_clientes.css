@@ -9,6 +9,7 @@
 
 * {
     box-sizing: border-box;
+    font-family: 'Baltime', 'Quicksand', system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -32,6 +33,10 @@ header {
 
 footer {
     padding-top: 2rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    color: var(--verde);
+    font-size: 0.95rem;
 }
 
 /* Pagina de Inicio */
@@ -65,7 +70,8 @@ footer {
     text-decoration: none;
     color: white;
     font-size: x-large;
-    font-weight: 600;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 #opciones_inicio a:hover {
@@ -74,11 +80,12 @@ footer {
 
 .boton_inicio {
     background-image: var(--degradado_verde);
-    padding: 1%;
-    width: 180px;
+    padding: 14px 24px;
+    width: 220px;
     text-align: center;
     border-radius: 30px;
     transition: ease 300ms;
+    box-shadow: 0 4px 12px rgba(60, 166, 6, 0.25);
 }
 
 .boton_inicio:hover {
@@ -91,6 +98,7 @@ footer {
     text-align: center;
     color: var(--verde);
     padding: 0 1rem;
+    margin-top: 1.5rem;
 }
 
 #contenedor_login, #contenedor_pedido {
@@ -98,7 +106,7 @@ footer {
     width: min(90%, 500px);
     flex-direction: column;
     justify-content: center;
-    margin: 40px auto 0;
+    margin: 30px auto 0;
     border: solid 2px var(--verde);
     box-shadow: 2px 2px 4px #51c6166b;
     border-radius: 30px;
@@ -108,8 +116,8 @@ footer {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 30px;
-    padding: 20px 40px;
+    gap: 22px;
+    padding: 24px 36px;
     border-radius: 16px;
     width: 100%;
 }
@@ -117,17 +125,19 @@ footer {
 #contenedor_login label, #contenedor_login input, #contenedor_pedido label, #contenedor_pedido input {
     color: var(--verde);
     font-size: large;
+    font-weight: 600;
 }
 
 #contenedor_login button, #contenedor_pedido button {
     background-image: var(--degradado_verde);
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin-top: 10px;
+    border-radius: 20px;
+    padding: 10px 22px;
+    margin-top: 6px;
     transition: ease 300ms;
     font-size: medium;
+    font-weight: 700;
 }
 
 #contenedor_login button:hover, #contenedor_pedido button:hover {
@@ -138,8 +148,8 @@ footer {
 #contenedor_login input, #contenedor_pedido input {
     border: 2px solid var(--verde_claro);
     outline: none;
-    padding: 4px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
     max-width: 100%;
 }
 
@@ -150,17 +160,18 @@ footer {
 .campo_login {
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 100%;
     gap: 10px;
 }
 
 .campo_login label {
-    width: 100px;
+    width: 120px;
     flex-shrink: 0;
 }
 
 .campo_login input {
-    width: 200px;
+    width: 220px;
     min-width: 0;
 }
 
@@ -205,6 +216,8 @@ nav .bi:hover {
 
 #logo_nav a {
     width: clamp(90px, 10vw, 220px);
+    display: block;
+    text-decoration: none;
 }
 
 .menu_abrir, .carrito_abrir {
@@ -219,6 +232,7 @@ nav .bi:hover {
     display: flex;
     flex-direction: column;
     z-index: 10;
+    overflow-y: auto;
 }
 
 .menu_abrir {
@@ -238,29 +252,31 @@ nav .bi:hover {
 #opciones_menu {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     padding: 0;
-    margin: 0;
+    margin: 1rem 0 0 0;
 }
 
 #opciones_menu li {
     list-style: none;
-    padding: 20px 0 20px 60px;
+    padding: 20px 0 20px 50px;
     border-bottom: solid 2px white;
 }
 
 #opciones_menu a {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     text-decoration: none;
     color: white;
     font-size: 1.5rem;
+    font-weight: 700;
     transition: 300ms ease;
+    cursor: pointer;
 }
 
 #opciones_menu a:hover {
-    font-size: 1.7rem;
+    transform: translateX(6px);
 }
 
 .icono_cerrar {
@@ -276,11 +292,12 @@ nav .bi:hover {
 #cerrar_trigger, #cerrar_carrito {
     font-size: 40px;
     transition: 300ms ease;
+    color: white;
 }
 
 #cerrar_trigger:hover, #cerrar_carrito {
     cursor: pointer;
-    font-size: 45px;
+    transform: scale(110%);
 }
 
 /* Menu */
@@ -293,26 +310,32 @@ nav .bi:hover {
 
 #hero {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
     height: 70vh;
-    min-height: 400px;
+    min-height: 520px;
     background-image: var(--degradado_verde);
     background-size: cover;
     background-position: center;
     text-align: center;
     color: white;
-    padding: 2rem;
+    padding: 2.5rem 1.5rem;
 }
 
 #hero-content {
     max-width: 800px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 #hero h1 {
     font-size: clamp(1.8rem, 5vw, 2.5rem);
     margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 #hero p {
@@ -322,30 +345,32 @@ nav .bi:hover {
 
 #boton_hero a {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 20px;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
     text-decoration: none;
-    font-weight: bold;
-    margin: 0.5rem;
+    font-weight: 700;
+    margin: 0.4rem;
     font-size: 1.2rem;
     color: var(--verde);
     background-color: white;
     transition: 300ms ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 #boton_hero a:hover {
-    font-size: 1.3rem;
+    transform: scale(106%);
 }
 
 .buscar {
     display: flex;
     align-items: center;
     border: solid 2px var(--verde);
-    border-radius: 20px;
-    padding: 0.8rem;
+    border-radius: 25px;
+    padding: 0.8rem 1.1rem;
     width: min(90%, 900px);
     margin: 0 auto;
     color: var(--verde);
+    background: white;
 }
 
 .buscar form {
@@ -368,6 +393,7 @@ nav .bi:hover {
     outline: none;
     font-size: 1rem;
     color: var(--verde);
+    font-weight: 600;
 }
 
 .categoria_grupo {
@@ -375,15 +401,15 @@ nav .bi:hover {
     flex-direction: column;
     align-items: center;
     width: min(95%, 600px);
-    margin-bottom: 2rem;
+    margin-bottom: 2.2rem;
 }
 
 .titulo_categoria {
     width: 100%;
     text-align: left;
-    font-size: 2rem;
+    font-size: 1.9rem;
     color: var(--verde);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border-bottom: 3px solid var(--verde);
     padding-bottom: 0.5rem;
     box-sizing: border-box;
@@ -399,12 +425,13 @@ nav .bi:hover {
 }
 
 .categoria {
-    border: none;
+    border: 2px solid var(--verde);
     background-color: white;
     color: var(--verde);
-    padding: 0.8rem 1.4rem;
-    border-radius: 20px;
+    padding: 0.7rem 1.3rem;
+    border-radius: 22px;
     font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
     transition: 300ms ease;
 }
@@ -416,6 +443,7 @@ nav .bi:hover {
 
 .categoria.activa {
     background-image: var(--degradado_verde);
+    border-color: transparent;
     color: white;
 }
 
@@ -439,23 +467,22 @@ nav .bi:hover {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    margin-top: 0.7rem;
 }
 
 .carrito_abrir #carrito a {
     text-decoration: none;
     font-size: 1.2rem;
-    font-weight: bold;
-    padding: 0.6rem 1rem;
+    font-weight: 700;
+    padding: 0.65rem 1.4rem;
     border-radius: 30px;
     transition: 300ms ease;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .carrito_abrir #carrito a:hover {
-    font-size: 1.3rem;
-}
-
-.carrito_abrir .editar_producto {
-    margin-top: 1rem;
+    transform: scale(105%);
 }
 
 #productos_menu {
@@ -469,11 +496,11 @@ nav .bi:hover {
 .producto {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.2rem;
     width: 100%;
-    min-height: 200px;
+    min-height: 185px;
     height: auto;
-    padding: 1rem;
+    padding: 1.1rem 0.6rem;
     box-sizing: border-box;
     border-bottom: 2px solid var(--verde);
     transition: 300ms ease;
@@ -484,7 +511,7 @@ nav .bi:hover {
     height: 160px;
     object-fit: cover;
     aspect-ratio: 1 / 1;
-    border-radius: 10%;
+    border-radius: 50%;
     flex-shrink: 0;
 }
 
@@ -492,21 +519,22 @@ nav .bi:hover {
     display: flex;
     flex: 1;
     min-width: 0;
-    height: 70%;
     flex-direction: column;
     justify-content: space-between;
+    gap: 0.5rem;
 }
 
 .info_producto h3 {
-    font-size: 1.6rem;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.45rem;
+    margin: 0;
 }
 
 .info_comprar {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
     justify-content: space-between;
+    margin-top: 0.2rem;
 }
 
 .precios {
@@ -518,22 +546,27 @@ nav .bi:hover {
 .precios p {
     margin: 0;
     font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--verde);
 }
 
 .comprar {
     text-decoration: none;
-    padding: 0.6rem;
+    padding: 0.6rem 1.25rem;
     color: white;
     background-image: var(--degradado_verde);
     border-radius: 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.05rem;
+    font-weight: 700;
     transition: 300ms ease;
     white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
 }
 
 .comprar:hover {
-    font-size: 1.3rem;
+    transform: scale(105%);
 }
 
 /* Carrito */
@@ -542,13 +575,13 @@ nav .bi:hover {
     display: flex;
     align-items: flex-start;
     gap: 2rem;
-    width: min(90%, 1200px);
-    margin: 0 auto;
-    padding-bottom: 2rem;
+    width: min(92%, 1200px);
+    margin: 1rem auto 0 auto;
+    padding-bottom: 2.5rem;
 }
 
 #detalles_compra, #carrito {
-    padding: 2vh;
+    padding: 1.5rem;
     box-sizing: border-box;
 }
 
@@ -558,6 +591,7 @@ nav .bi:hover {
 
 .carrito_abrir #carrito {
     border: none;
+    width: 100%;
 }
 
 .carrito_abrir #carrito .producto_carrito img, .carrito_abrir #carrito .cantidad_producto {
@@ -572,80 +606,161 @@ nav .bi:hover {
     border: solid 2px var(--verde);
     border-radius: 30px;
     min-width: 0;
+    background: white;
 }
 
 #form_detalles {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
+    gap: 25px;
     width: 100%;
-    max-width: 400px;
+}
+
+#form_detalles > div:not(#submit_carrito) {
+    width: 100%;
+    min-width: 0;
 }
 
 #form_detalles h2 {
-    margin: 0;
+    margin: 0.4rem 0 0.8rem 0;
     display: block;
-    width: 350px;
-    max-width: 100%;
+    width: 100%;
+    max-width: none;
     text-align: center;
     background-image: var(--degradado_verde);
-    padding: 0.6rem;
+    padding: 0.65rem;
     border-radius: 30px;
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
 .opciones_detalles {
-    padding: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
     width: 100%;
 }
 
 .opciones_detalles input[type="text"], .opciones_detalles input[type="tel"] {
     color: var(--verde);
-    accent-color: var(--verde); 
+    accent-color: var(--verde);
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 100%;
+    background: transparent; 
 }
 
 .opcion {
     display: flex;
-    gap: 1rem;
-    width: 250px;
-    border: solid 2px var(--verde);
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 55px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--verde);
     border-radius: 12px;
-    padding: 0.6rem;
-    font-size: 1.2rem;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.opcion:hover {
+    background-color: #f4fdef;
+}
+
+.opcion label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .opcion i {
     color: var(--verde);
+    font-size: 1.2rem;
     padding-right: 10px;
 }
 
-input[type="radio"], input[type="date"], input[type="time"] {
-    accent-color: var(--verde); 
+.opcion input[type="radio"] {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    accent-color: var(--verde);
+    cursor: pointer;
+}
+
+.opcion:has(input[type="radio"]:checked) {
+    border-color: var(--verde);
+    background-color: #eef8e9;
+    box-shadow: 0 3px 10px rgba(60, 166, 6, 0.10);
+}
+
+.opcion input:not([type="radio"]) {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #333;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.opcion:has(input:not([type="radio"])) {
+    background-color: white;
+}
+
+.opcion:has(input:not([type="radio"])) label {
+    flex: 0 0 auto;
+    width: 22px;
+    justify-content: center;
+}
+
+.opcion:focus-within {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(60, 166, 6, 0.10);
+}
+
+.opcion input[type="date"], .opcion input[type="time"] {
+    cursor: pointer;
+    color-scheme: light;
+}
+
+.opcion input::placeholder {
+    color: var(--verde);
+    font-weight: 500;
 }
 
 #submit_carrito {
     text-align: center;
-    padding-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    width: 100%;
 }
 
 #confirmar_pedido {
     background-image: var(--degradado_verde);
     border: none;
-    border-radius: 20px;
-    padding: 0.6rem;
-    font-size: 1.2rem;
+    border-radius: 25px;
+    padding: 0.8rem 1.8rem;
+    font-size: 1.15rem;
+    font-weight: 700;
     color: white;
     transition: 300ms ease;
 }
 
 #confirmar_pedido:hover {
-    font-size: 1.3rem;
+    transform: scale(104%);
     cursor: pointer;
 }
 
@@ -654,7 +769,7 @@ input[type="radio"], input[type="date"], input[type="time"] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2vh;
+    gap: 1.2rem;
     border: solid 2px var(--verde);
     border-radius: 30px;
     min-width: 0;
@@ -665,25 +780,27 @@ input[type="radio"], input[type="date"], input[type="time"] {
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
-    gap: 2rem;
+    gap: 1.2rem;
+    width: 100%;
 }
 
 .info_carrito {
     background-image: var(--degradado_verde);
-    padding: 0.6rem;
+    padding: 0.6rem 1.2rem;
     text-align: center;
     border-radius: 30px;
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+    font-weight: 700;
 }
 
 #carrito .info_carrito {
     display: block;
     width: 100%;
-    max-width: 200px;
+    max-width: 240px;
     box-sizing: border-box;
     text-align: center;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .texto_carrito {
@@ -705,23 +822,26 @@ input[type="radio"], input[type="date"], input[type="time"] {
 .producto_carrito {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     width: 100%;
+    padding-bottom: 0.8rem;
 }
 
 .producto_carrito img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-    border: solid 4px var(--verde);
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
+    padding: 3px;
+    background-color: white;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .desc_carrito {
     color: var(--verde);
-    font-size: 1.05rem;
+    font-size: 1rem;
     min-width: 0;
     flex: 1;
 }
@@ -729,7 +849,8 @@ input[type="radio"], input[type="date"], input[type="time"] {
 .producto_precio {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.6rem;
+    font-weight: 700;
 }
 
 .producto_precio p{
@@ -751,16 +872,17 @@ input[type="radio"], input[type="date"], input[type="time"] {
     display: inline-flex;
     justify-content: left;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     border: solid 2px var(--verde);
     border-radius: 20px;
+    overflow: hidden;
 }
 
 .mas_menos {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.2rem 0.2rem;
+    padding: 0.2rem 0.45rem;
     cursor: pointer;
 }
 
@@ -781,11 +903,12 @@ input[type="radio"], input[type="date"], input[type="time"] {
 }
 
 .cantidad {
-    padding: 0 0.4rem;
+    padding: 0 0.3rem;
+    font-weight: 700;
 }
 
 .eliminar_producto i {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     cursor: pointer;
 }
 
@@ -794,8 +917,8 @@ input[type="radio"], input[type="date"], input[type="time"] {
     /* Navegación */
 
     nav {
-        padding-left: 40px;
-        padding-right: 40px;
+        padding-left: 30px;
+        padding-right: 30px;
     }
 
     nav .bi {

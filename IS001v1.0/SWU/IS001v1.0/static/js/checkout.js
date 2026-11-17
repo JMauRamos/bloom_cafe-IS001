@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form_detalles');
     const botonConfirmar = document.getElementById('confirmar_pedido');

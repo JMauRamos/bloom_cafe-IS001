@@ -328,8 +328,8 @@ nav .bi:hover {
     font-weight: bold;
     margin: 0.5rem;
     font-size: 1.2rem;
-    color: var(--degradado_verde);
-    background-image: white;
+    color: var(--verde);
+    background-color: white;
     transition: 300ms ease;
 }
 

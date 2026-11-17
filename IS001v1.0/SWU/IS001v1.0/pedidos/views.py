@@ -1,10 +1,14 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 import json
 from django.http import JsonResponse
 from django.db import transaction
+from django.db.models import ProtectedError
+from django.contrib import messages
+from datetime import date
 from .models import Pedido, DetallePedido, Modificacion
-from menu.models import VarianteProducto, Ingrediente
+from menu.models import VarianteProducto, Ingrediente, Producto, Categoria, Tamaño
 
 # Create your views here.
 
@@ -17,11 +21,217 @@ def dashboard(request):
 
 @login_required(login_url='inicio')
 def pedidos_admin(request):
-    return render(request, 'panel_admin/pedidos_admin.html')
+    hoy = date.today()
+    pedidos = Pedido.objects.prefetch_related('detalles__variante_producto__producto').order_by('-id')
+    
+    pedidos_hoy = pedidos.filter(fecha_entrega=hoy)
+    
+    contexto = {
+        'pedidos': pedidos,
+        'total_hoy': pedidos_hoy.count(),
+        'pendientes': pedidos_hoy.filter(estado='PENDIENTE').count(),
+        'preparando': pedidos_hoy.filter(estado='PREPARANDO').count(),
+        'listos': pedidos_hoy.filter(estado='LISTO').count(),
+        'entregados': pedidos_hoy.filter(estado='ENTREGADO').count(),
+        'conteos': {
+            'todos': pedidos.count(),
+            'pendientes': pedidos.filter(estado='PENDIENTE').count(),
+            'preparando': pedidos.filter(estado='PREPARANDO').count(),
+            'listos': pedidos.filter(estado='LISTO').count(),
+            'entregados': pedidos.filter(estado='ENTREGADO').count(),
+            'cancelados': pedidos.filter(estado='CANCELADO').count(),
+        },
+        'hoy': hoy,
+    }
+    return render(request, 'panel_admin/pedidos_admin.html', contexto)
+
+@login_required(login_url='inicio')
+@require_POST
+def avanzar_estado_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    
+    if pedido.estado in ['ENTREGADO', 'CANCELADO']:
+        return JsonResponse({'error': 'El pedido ya está finalizado'}, status=400)
+    
+    pedido.avanzar_estado()
+    
+    return JsonResponse({
+        'status': 'success',
+        'nuevo_estado': pedido.get_estado_display(),
+    })
+
+def api_detalle_pedido(request, pedido_id):
+    try:
+        pedido = Pedido.objects.prefetch_related(
+            'detalles__variante_producto__producto',
+            'detalles__variante_producto__tamaño',
+            'detalles__modificaciones__ingrediente',
+        ).get(id=pedido_id)
+        
+        detalles_list = []
+        for detalle in pedido.detalles.all():
+            modificaciones = []
+            for mod in detalle.modificaciones.all():
+                modificaciones.append({
+                    'nombre': mod.ingrediente.nombre,
+                    'accion': mod.get_accion_display() if hasattr(mod, 'get_accion_display') else mod.accion,
+                    'costo_extra': float(mod.ingrediente.costo_extra),
+                })
+            
+            detalles_list.append({
+                'producto': detalle.variante_producto.producto.nombre,
+                'variante': detalle.variante_producto.tamaño.nombre if detalle.variante_producto.tamaño else 'Único',
+                'cantidad': detalle.cantidad,
+                'precio_unitario': float(detalle.precio_unitario),
+                'subtotal': float(detalle.subtotal),
+                'notas': detalle.notas_extra or '',
+                'modificaciones': modificaciones,
+            })
+        
+        data = {
+            'id': pedido.id,
+            'cliente': pedido.nombre_cliente,
+            'telefono': pedido.telefono_cliente,
+            'estado': pedido.get_estado_display(),
+            'fecha': pedido.fecha_entrega.strftime('%d/%m/%Y') if pedido.fecha_entrega else '',
+            'hora': pedido.hora_entrega.strftime('%H:%M') if pedido.hora_entrega else '',
+            'lugar_entrega': pedido.get_lugar_entrega_display(),
+            'metodo_pago': pedido.get_metodo_pago_display(),
+            'total': float(pedido.total),
+            'detalles': detalles_list,
+        }
+        return JsonResponse(data)
+    except Pedido.DoesNotExist:
+        return JsonResponse({'error': 'Pedido no encontrado'}, status=404)
 
 @login_required(login_url='inicio')
 def productos_admin(request):
-    return render(request, 'panel_admin/productos_admin.html')
+    productos = Producto.objects.all()
+    total_productos = productos.count()
+    productos_disponibles = productos.filter(disponibilidad=True).count()
+    categorias = Categoria.objects.all()
+    tamaños = Tamaño.objects.all()
+    ingredientes = Ingrediente.objects.all()
+
+    contexto = {'productos': productos, 'total_productos': total_productos, 'productos_disponibles': productos_disponibles, 'categorias': categorias, 'tamaños': tamaños, 'ingredientes': ingredientes}
+    return render(request, 'panel_admin/productos_admin.html', contexto)
+
+@login_required(login_url='inicio')
+def crear_producto(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        categoria_id = request.POST.get('categoria')
+        disponibilidad = request.POST.get('disponibilidad') == 'on'
+        foto = request.FILES.get('foto_producto')
+
+        producto = Producto.objects.create(
+            nombre=nombre,
+            descripcion=descripcion,
+            categoria_id=categoria_id,
+            disponibilidad=disponibilidad,
+            foto_producto=foto,
+            precio=0
+        )
+
+        ids_ingredientes = request.POST.getlist('ingredientes[]')
+        if ids_ingredientes:
+            producto.ingredientes.set(ids_ingredientes)
+        
+        tamaños = request.POST.getlist('tamaño[]')
+        precios = request.POST.getlist('precio_variante[]')
+        
+        min_precio = float('inf')
+        for tam_id, precio_str in zip(tamaños, precios):
+            if tam_id and precio_str:
+                precio = float(precio_str)
+                VarianteProducto.objects.create(
+                    producto=producto,
+                    tamaño_id=tam_id,
+                    precio=precio
+                )
+                if precio < min_precio:
+                    min_precio = precio
+                    
+        if min_precio != float('inf'):
+            producto.precio = min_precio
+            producto.save()
+    
+        return redirect('productos_admin')
+
+@login_required(login_url='inicio')
+def eliminar_producto(request, producto_id):
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id)
+        try:
+            producto.delete()
+            messages.success(request, f'El producto "{producto.nombre}" fue eliminado correctamente.')
+        except ProtectedError:
+            messages.error(request, 'No se puede eliminar este producto porque tiene pedidos asociados.')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar: {e}')
+
+    return redirect('productos_admin') 
+
+@login_required(login_url='inicio')
+def editar_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        producto.nombre = request.POST.get('nombre')
+        producto.descripcion = request.POST.get('descripcion')
+        producto.categoria_id = request.POST.get('categoria')
+        producto.disponibilidad = request.POST.get('disponibilidad') == 'on'
+        
+        if request.FILES.get('foto_producto'):
+            producto.foto_producto = request.FILES.get('foto_producto')
+        
+        producto.save()
+        
+        ids_ingredientes = request.POST.getlist('ingredientes[]')
+        producto.ingredientes.set(ids_ingredientes)
+        
+        tamaños_enviados = []
+        precios = request.POST.getlist('precio_variante[]')
+        tamaños = request.POST.getlist('tamaño[]')
+        
+        min_precio = float('inf')
+        for tam_id, precio_str in zip(tamaños, precios):
+            if tam_id and precio_str:
+                precio = float(precio_str)
+                VarianteProducto.objects.update_or_create(
+                    producto=producto,
+                    tamaño_id=tam_id,
+                    defaults={'precio': precio}
+                )
+                tamaños_enviados.append(int(tam_id))
+                if precio < min_precio:
+                    min_precio = precio
+        
+        for variante in producto.variantes.all():
+            if variante.tamaño_id not in tamaños_enviados:
+                try:
+                    variante.delete()
+                except ProtectedError:
+                    messages.warning(request, 
+                        f'No se eliminó el tamaño "{variante.tamaño.nombre}" porque ya tiene pedidos asociados.')
+        
+        if min_precio != float('inf'):
+            producto.precio = min_precio
+            producto.save()
+        
+        messages.success(request, f'Producto "{producto.nombre}" actualizado.')
+        return redirect('productos_admin')
+    
+    contexto = {
+        'producto': producto,
+        'categorias': Categoria.objects.all(),
+        'tamaños': Tamaño.objects.all(),
+        'ingredientes': Ingrediente.objects.all(),
+        'variantes_actuales': producto.variantes.select_related('tamaño').all(),
+        'ingredientes_seleccionados': set(producto.ingredientes.values_list('id', flat=True)),
+    }
+    return render(request, 'panel_admin/editar_producto.html', contexto)
 
 def checkout(request):
     if request.method == 'POST':

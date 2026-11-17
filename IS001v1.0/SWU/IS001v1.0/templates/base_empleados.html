@@ -5,16 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bloom Café | {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     {% block styles %} {% endblock %}
+    
     <link rel="icon" type="image/x-icon" href="{% static "images/favico.ico" %}">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="dashboard.html">
+      <a class="brand" href="{%url 'dashboard' %}">
         <img src="{% static "images/Logo.jpeg" %}" alt="Bloom Café">
         <span>Panel administrativo</span>
       </a>
-      <div class="user"><span class="avatar">A</span><span>Administrador</span><span class="chevron">⌄</span></div>
+      <div class="user"><span>{% if user.first_name %} {{ user.first_name }} {{ user.last_name }} {% else %} {{ user.username }}
+        {% endif %}</span></div>
     </header>
 
     <aside class="sidebar">
@@ -31,14 +34,13 @@
       {% block contenido %}
       {% endblock %}
 
-      <footer>Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026</footer>
-    </main>
-
     {% block modal %}
     {% endblock %}
 
-    {% block scripts %}
-    {% endblock %}
+    <footer>Hecho con <span>♥</span> para Bloom Café <b>•</b> 2026
+      {% block scripts %}
+      {% endblock %}
+    </footer>
     
   </body>
 </html>

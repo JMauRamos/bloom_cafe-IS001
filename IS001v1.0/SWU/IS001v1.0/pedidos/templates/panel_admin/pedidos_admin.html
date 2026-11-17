@@ -8,106 +8,202 @@
 {% endblock %}
 
 
-     {% block contenido %}
-          <main class="main">
-               <div class="page-heading">
+{% block contenido %}
+     <main class="main">
+          <form style="display:none;">{% csrf_token %}</form>
+          <div class="page-heading">
+               <div>
+                    <p class="eyebrow">ADMINISTRACIÓN / PEDIDOS</p>
+                    <h1>Gestión de pedidos</h1>
+                    <p class="sub">Consulta y actualiza los pedidos de tu cafetería.</p>
+               </div>
+               <div class="today">
+                    <span class="calendar">▦</span>
+                    <span>Hoy, {{ hoy|date:"d M Y" }}</span>
+               </div>
+          </div>
+
+          <section class="summary">
+               <article>
+                    <span class="summary-icon all">▤</span>
                     <div>
-                         <p class="eyebrow">ADMINISTRACIÓN / PEDIDOS</p>
-                         <h1>Gestión de pedidos</h1>
-                         <p class="sub">Consulta y actualiza los pedidos de tu cafetería.</p>
+                         <small>Total de hoy</small>
+                         <strong>{{ total_hoy }}</strong>
                     </div>
-                    <div class="today">
-                         <span class="calendar">▦</span>
-                         <span>Hoy, 7 oct. 2026</span>
+               </article>
+               <article>
+                    <span class="summary-icon active-state">◷</span>
+                    <div>
+                         <small>Pendientes</small>
+                         <strong>{{ pendientes }}</strong>
+                    </div>
+               </article>
+               <article>
+                    <span class="summary-icon active-state">◷</span>
+                    <div>
+                         <small>En preparación</small>
+                         <strong>{{ preparando }}</strong>
+                    </div>
+               </article>
+               <article>
+                    <span class="summary-icon ready">&checkmark;</span>
+                    <div>
+                         <small>Listos</small>
+                         <strong>{{ listos }}</strong>
+                    </div>
+               </article>
+               <article>
+                    <span class="summary-icon done">&nearrow;</span>
+                    <div>
+                         <small>Entregados</small>
+                         <strong>{{ entregados }}</strong>
+                    </div>
+               </article>
+          </section>
+
+          <section class="panel">
+               <div class="toolbar">
+                    <label class="search">
+                         <span>&telrec;</span>
+                         <input aria-label="Buscar pedido o producto" id="search" placeholder="Buscar pedido o producto..." type="search"/>
+                    </label>
+                    <label class="date-filter">
+                         <span>▦</span>
+                         <select id="dateFilter">
+                              <option value="all">Todas las fechas</option>
+                              <option value="today" selected>Hoy</option>
+                              <option value="yesterday">Ayer</option>
+                         </select>
+                    </label>
+               </div>
+
+               <div class="tabs" role="tablist">
+                    <button class="tab active" data-status="TODOS"> Todos <span>{{ conteos.todos }}</span> </button>
+                    <button class="tab" data-status="PENDIENTE"> Pendientes <span>{{ conteos.pendientes }}</span> </button>
+                    <button class="tab" data-status="PREPARANDO"> En preparación <span>{{ conteos.preparando }}</span> </button>
+                    <button class="tab" data-status="LISTO"> Listos <span>{{ conteos.listos }}</span> </button>
+                    <button class="tab" data-status="ENTREGADO"> Entregados <span>{{ conteos.entregados }}</span> </button>
+                    <button class="tab" data-status="CANCELADO"> Cancelados <span>{{ conteos.cancelados }}</span> </button>
+               </div>
+
+               <div class="table-wrap">
+                    <table>
+                         <thead>
+                              <tr>
+                              <th>Pedido</th>
+                              <th>Cliente</th>
+                              <th>Productos</th>
+                              <th>Hora</th>
+                              <th>Total</th>
+                              <th>Estado</th>
+                              <th></th>
+                              </tr>
+                         </thead>
+                         <tbody id="orders">
+                              {% for pedido in pedidos %}
+                              <tr class="order-row" 
+                              data-id="{{ pedido.id }}"
+                              data-status="{{ pedido.estado }}"
+                              data-fecha="{{ pedido.fecha_entrega|date:'Y-m-d' }}"
+                              data-search="{{ pedido.id }} {{ pedido.nombre_cliente|lower }} {% for d in pedido.detalles.all %}{{ d.variante_producto.producto.nombre|lower }} {% endfor %}">
+                              
+                              <td><strong>#{{ pedido.id }}</strong></td>
+                              <td>{{ pedido.nombre_cliente }}</td>
+                              <td class="productos-cell">
+                                   {% for detalle in pedido.detalles.all %}
+                                        <span class="producto-tag">
+                                             {{ detalle.cantidad }}x {{ detalle.variante_producto.producto.nombre }}
+                                        </span>{% if not forloop.last %}, {% endif %}
+                                   {% endfor %}
+                              </td>
+                              <td>{{ pedido.hora_entrega|time:"H:i" }}</td>
+                              <td><strong>${{ pedido.total }}</strong></td>
+                              <td>
+                                   <span class="badge-estado estado-{{ pedido.estado|lower }}">
+                                        {{ pedido.get_estado_display }}
+                                   </span>
+                              </td>
+                              <td class="actions-cell">
+                                   {% if pedido.estado == 'PENDIENTE' %}
+                                        <button class="btn-estado btn-preparar btn-avanzar" 
+                                                  data-id="{{ pedido.id }}" 
+                                                  data-nuevo-estado="PREPARANDO">Preparar</button>
+                                   {% elif pedido.estado == 'PREPARANDO' %}
+                                        <button class="btn-estado btn-listo btn-avanzar" 
+                                                  data-id="{{ pedido.id }}" 
+                                                  data-nuevo-estado="LISTO">Marcar Listo</button>
+                                   {% elif pedido.estado == 'LISTO' %}
+                                        <button class="btn-estado btn-entregar btn-avanzar" 
+                                                  data-id="{{ pedido.id }}" 
+                                                  data-nuevo-estado="ENTREGADO">Entregar</button>
+                                   {% endif %}
+                                   <button type="button" class="btn-ver-detalle" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
+                                        <i class="bi bi-eye"></i> Ver
+                                   </button>
+                              </td>
+                              </tr>
+                              {% empty %}
+                              <tr>
+                              <td colspan="7" style="text-align: center; padding: 30px; color: #888;">
+                                   No hay pedidos registrados aún.
+                              </td>
+                              </tr>
+                              {% endfor %}
+                         </tbody>
+                    </table>
+                    <div class="empty" hidden id="empty">No encontramos pedidos con esos filtros.</div>
+               </div>
+
+               <div class="table-footer">
+                    <span id="resultCount">Mostrando {{ pedidos|length }} pedidos</span>
+               </div>
+          </section>
+     </main>
+{% endblock %}
+
+{% block modal %}
+     <div class="modal fade" id="detallePedidoModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+               <div class="modal-content">
+                    <div class="modal-header" style="background: #367b48; color: white;">
+                         <h5 class="modal-title">
+                              Pedido <span id="detalle-id-pedido"></span>
+                         </h5>
+                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                         <div class="row mb-3">
+                              <div class="col-md-6">
+                                   <p class="mb-1"><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
+                                   <p class="mb-1"><strong>Teléfono:</strong> <span id="detalle-telefono"></span></p>
+                                   <p class="mb-1"><strong>Lugar:</strong> <span id="detalle-lugar"></span></p>
+                              </div>
+                              <div class="col-md-6">
+                                   <p class="mb-1"><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+                                   <p class="mb-1"><strong>Hora:</strong> <span id="detalle-hora"></span></p>
+                                   <p class="mb-1"><strong>Método de pago:</strong> <span id="detalle-pago"></span></p>
+                              </div>
+                         </div>
+                         <hr>
+                         <h6 class="mb-3">Productos del pedido</h6>
+                         <div id="detalle-productos"></div>
+                         <hr>
+                         <div class="d-flex justify-content-between align-items-center">
+                              <h5 class="mb-0">Total</h5>
+                              <h4 class="mb-0" style="color: #367b48;">
+                              $<span id="detalle-total"></span>
+                              </h4>
+                         </div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                </div>
-               <section class="summary">
-                    <article>
-                         <span class="summary-icon all">▤</span>
-                         <div>
-                              <small>Total de hoy</small>
-                              <strong>12</strong>
-                         </div>
-                    </article>
-                    <article>
-                         <span class="summary-icon active-state">◷</span>
-                         <div>
-                              <small>En proceso</small>
-                              <strong>4</strong>
-                         </div>
-                    </article>
-                    <article>
-                         <span class="summary-icon ready">&checkmark;</span>
-                         <div>
-                              <small>Listos</small>
-                              <strong>3</strong>
-                         </div>
-                    </article>
-                    <article>
-                         <span class="summary-icon done">&nearrow;</span>
-                         <div>
-                              <small>Entregados</small>
-                              <strong>5</strong>
-                         </div>
-                    </article>
-               </section>
-               <section class="panel">
-                    <div class="toolbar">
-                         <label class="search">
-                              <span>&telrec;</span>
-                              <input aria-label="Buscar pedido o producto" id="search" placeholder="Buscar pedido o producto..." type="search"/>
-                         </label>
-                         <label class="date-filter">
-                              <span>▦</span>
-                              <select aria-label="Filtrar por fecha" id="dateFilter">
-                                   <option value="all">Todas las fechas</option>
-                                   <option value="today">Hoy</option>
-                                   <option value="yesterday">Ayer</option>
-                              </select>
-                         </label>
-                    </div>
-                    <div aria-label="Filtrar pedidos por estado" class="tabs" role="tablist">
-                         <button class="tab active" data-status="Todos">Todos <span> 12 </span> </button>
-                         <button class="tab" data-status="En proceso"> En proceso <span> 4 </span> </button>
-                         <button class="tab" data-status="Listo"> Listos <span> 3 </span> </button>
-                         <button class="tab" data-status="Entregado"> Entregados <span> 5 </span> </button>
-                         <button class="tab" data-status="Cancelado"> Cancelados <span> 1 </span> </button>
-                    </div>
-                    <div class="table-wrap">
-                         <table>
-                              <thead>
-                                   <tr>
-                                        <th> Pedido </th>
-                                        <th> Cliente </th>
-                                        <th> Productos </th>
-                                        <th> Hora </th>
-                                        <th> Total </th>
-                                        <th> Estado </th>
-                                        <th></th>
-                                   </tr>
-                              </thead>
-                              <tbody id="orders">
-                              </tbody>
-                         </table>
-                         <div class="empty" hidden="" id="empty"> No encontramos pedidos con esos filtros. </div>
-                    </div>
-                    <div class="table-footer">
-                         <span id="resultCount"> Mostrando pedidos </span>
-                         <div class="pagination" id="pagination">
-                              <button aria-label="P&aacute;gina anterior" class="page-arrow" data-page="prev"> &lsaquo; </button>
-                              <button class="page-number active" data-page="1"> 1 </button>
-                              <button class="page-number" data-page="2"> 2 </button>
-                              <button class="page-number" data-page="3"> 3 </button>
-                              <button aria-label="P&aacute;gina siguiente" class="page-arrow" data-page="next"> &rsaquo; </button>
-                         </div>
-                    </div>
-               </section>
-          </main>
-     {% endblock %}
+          </div>
+     </div>
+{% endblock %}
 
      {% block scripts %}
-          <script src="{% static "js/pedidos.js" %}"></script>
+          <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+          <script src="{% static "js/pedidosAdmin.js" %}"></script>
      {% endblock %}
-
- </body>
-</html>

@@ -4,77 +4,219 @@
 {% block title %} Gestión de Productos {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static "css/productos.css/" %}">
+  <link rel="stylesheet" href="{% static 'css/productos.css' %}">
 {% endblock %}
 
-    {% block contenido %}
-    <main class="main">
-      <div class="page-heading">
-        <div>
-          <p class="eyebrow">ADMINISTRACIÓN / CATÁLOGO</p>
-          <h1>Gestión de productos</h1>
-          <p class="sub">Administra el menú de tu cafetería.</p>
-        </div>
-        <button class="button primary" id="addProduct">＋ Agregar producto</button>
+  {% block contenido %}
+  <main class="main">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">ADMINISTRACIÓN / CATÁLOGO</p>
+        <h1>Gestión de productos</h1>
+        <p class="sub">Administra el menú de tu cafetería.</p>
+      </div>
+      <button class="button primary" id="addProduct" data-bs-toggle="modal" data-bs-target="#agregarProducto">＋ Agregar producto</button>
+    </div>
+
+    <section class="summary-bar" aria-label="Resumen de productos">
+      <span><strong id="productCount">{{ total_productos }}</strong> productos en tu menú</span>
+      <span class="summary-separator"></span>
+      <span><span class="active-dot"></span> <span id="availableCount">{{ productos_disponibles }}</span> disponibles</span>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <label class="search"><span>⌕</span><input id="searchProducts" type="search" placeholder="Buscar producto..." aria-label="Buscar producto"></label>
+        <span class="toolbar-hint">Filtra por categoría</span>
+      </div>
+      <div class="category-tabs" role="tablist" aria-label="Categorías de productos">
+        <button class="category-tab active" data-category="Todos">Todos</button>
+        {% for categoria in categorias %}
+          <button class="category-tab" data-category="{{categoria.nombre}}">{{categoria.nombre}}</button>
+        {% endfor %}
       </div>
 
-      <section class="summary-bar" aria-label="Resumen de productos">
-        <span class="summary-icon">♧</span>
-        <span><strong id="productCount">5</strong> productos en tu menú</span>
-        <span class="summary-separator"></span>
-        <span><span class="active-dot"></span> <span id="availableCount">5</span> disponibles</span>
-      </section>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Acciones</th></tr>
+          </thead>
+          <tbody id="productsTable">
+            {% for producto in productos %}
+              <tr>
+                <td>
+                  <div class="product-cell">
+                    {% if producto.foto_producto %}
+                      <img src="{{producto.foto_producto.url}}" alt="{{producto.nombre}}">
+                    {% else %}
+                      <img src="{% static 'images/Logo.jpeg' %}" alt="Sin imagen">
+                    {% endif %}
+                    <span>
+                      <span class="product-name"> {{producto.nombre}} </span>
+                    </span>
+                  </div>
+                </td>
+                <td><span class="category-label"> {{producto.categoria.nombre}} </span></td>
+                <td class="price">${{producto.precio}}</td>
+                <td>
+                  {% if producto.disponibilidad %}
+                    <span class="availability">Disponible
+                  {% else %}
+                    <span class="availability low">No Disponible
+                  {% endif %}
+                </span></td>
+                <td>
+                  <div class="actions">
+                    <a class="action" href="{% url 'editar_producto' producto.id %}">Editar</a>
+                    <button type="button" class="action delete" data-bs-toggle="modal" data-bs-target="#eliminarProductoModal" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}" data-url="{% url 'eliminar_producto' producto.id %}">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="empty" id="emptyProducts" hidden>No encontramos productos con esos filtros.</div>
+      </div>
+      <div class="table-footer"><span id="tableCount">Mostrando 5 productos</span><span class="updated-note">Los cambios se aplican a este catálogo</span></div>
+    </section>
+  </main>
+  {% endblock %}
 
-      <section class="panel">
-        <div class="toolbar">
-          <label class="search"><span>⌕</span><input id="searchProducts" type="search" placeholder="Buscar producto..." aria-label="Buscar producto"></label>
-          <span class="toolbar-hint">Filtra por categoría</span>
-        </div>
-        <div class="category-tabs" role="tablist" aria-label="Categorías de productos">
-          <button class="category-tab active" data-category="Todos">Todos</button>
-          <button class="category-tab" data-category="Café">Cafés</button>
-          <button class="category-tab" data-category="Frappé">Frappés</button>
-          <button class="category-tab" data-category="Té">Tés</button>
-          <button class="category-tab" data-category="Panadería">Panadería</button>
-          <button class="category-tab" data-category="Postre">Postres</button>
-        </div>
+  {% block modal %}
+  <div class="modal fade" id="agregarProducto" tabindex="-1" aria-labelledby="agregarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'crear_producto' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="agregarProductoLabel">Agregar un Producto</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Nombre del Producto</label>
+                <input type="text" name="nombre" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Categoría</label>
+                <select name="categoria" class="form-select" required>
+                  <option value="">Seleccione...</option>
+                  {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <textarea name="descripcion" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <label class="form-label">Foto del Producto</label>
+                <input type="file" name="foto_producto" class="form-control" accept="image/*">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" name="disponibilidad" id="checkDispo" checked>
+                  <label class="form-check-label" for="checkDispo">Disponible</label>
+                </div>
+              </div>
+            </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="productsTable"></tbody>
-          </table>
-          <div class="empty" id="emptyProducts" hidden>No encontramos productos con esos filtros.</div>
-        </div>
-        <div class="table-footer"><span id="tableCount">Mostrando 5 productos</span><span class="updated-note">Los cambios se aplican a este catálogo</span></div>
-      </section>
-    </main>
-    {% endblock %}
+            <hr>
 
-    {% block modal %}
-    <dialog class="product-dialog" id="productDialog">
-      <form id="productForm" method="dialog">
-        <div class="dialog-heading">
-          <div><p class="eyebrow">CATÁLOGO DE PRODUCTOS</p><h2 id="dialogTitle">Agregar producto</h2></div>
-          <button class="close-dialog" type="button" id="closeDialog" aria-label="Cerrar">×</button>
-        </div>
-        <input type="hidden" id="productId">
-        <div class="form-grid">
-          <label class="field">Nombre<input id="productName" required maxlength="50" placeholder="Ej. Café Americano"></label>
-          <label class="field">Categoría<select id="productCategory" required><option value="">Seleccionar categoría</option><option>Café</option><option>Frappé</option><option>Té</option><option>Panadería</option><option>Postre</option></select></label>
-          <label class="field">Precio (MXN)<input id="productPrice" type="number" min="1" step="1" required placeholder="50"></label>
-          <label class="field">Stock disponible<input id="productStock" type="number" min="0" step="1" required placeholder="20"></label>
-        </div>
-        <label class="field description-field">Descripción <span class="optional">(opcional)</span><textarea id="productDescription" rows="3" maxlength="140" placeholder="Describe brevemente el producto"></textarea></label>
-        <div class="dialog-actions"><button class="button secondary" type="button" id="cancelDialog">Cancelar</button><button class="button primary" type="submit">Guardar producto</button></div>
-      </form>
-    </dialog>
-    {% endblock %}
+            <h5 class="mb-3">Ingredientes del Producto</h5>
+            <div class="ingredientes-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                {% for ingrediente in ingredientes %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="ingredientes[]" value="{{ ingrediente.id }}" id="ing_{{ ingrediente.id }}">
+                        <label class="form-check-label" for="ing_{{ ingrediente.id }}">
+                            {{ ingrediente.nombre }}
+                            {% if ingrediente.costo_extra > 0 %}
+                                <span class="badge bg-info text-dark">+${{ ingrediente.costo_extra }}</span>
+                            {% endif %}
+                            {% if ingrediente.opcional %}
+                                <span class="badge">Opcional</span>
+                            {% endif %}
+                        </label>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No hay ingredientes registrados. Agrega algunos en el admin.</p>
+                {% endfor %}
+            </div>
+            
+            <hr>
 
-    {% block scripts %}
-      <script src="{% static "js/productos.js" %}"></script>
-    {% endblock %}
-  </body>
-</html>
+            <h5 class="mb-3">Tamaños y Precios</h5>
+            <div id="variantes-container">
+              <div class="row mb-2 variante-row">
+                <div class="col-md-5">
+                  <select name="tamaño[]" class="form-select" required>
+                    <option value="">Seleccione Tamaño...</option>
+                    {% for tamaño in tamaños %}
+                      <option value="{{ tamaño.id }}">{{ tamaño.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-5">
+                  <input type="number" name="precio_variante[]" class="form-control" placeholder="Precio (ej. 50.00)" step="0.01" required>
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-danger w-100" onclick="eliminarVariante(this)">X</button>
+                </div>
+              </div>
+            </div>
+            
+            <button type="button" class="btn btn-outline-success btn-sm mt-2" onclick="agregarVariante()">+ Agregar otro tamaño</button>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar Producto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="eliminarProductoModal" tabindex="-1" aria-labelledby="eliminarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="eliminarProductoLabel">Confirmar Eliminación</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar el producto:</p>
+          <p class="fw-bold text-center" id="eliminarNombreProducto"></p>
+          <p class="text-muted small text-center">Esta acción no se puede deshacer.</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <form id="formEliminarProducto" method="POST" action="">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+  {% block scripts %}
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/adminProductos.js' %}"></script>
+  {% endblock %}

@@ -408,6 +408,18 @@ tbody tr:last-child td {
 .view:hover {
   background:  var(--mint);
 }
+.btn-estado, .action {
+  background: white;
+  border: 1px solid #dfe7de;
+  border-radius: 6px;
+  padding: 6px 9px;
+  color: #5b735e;
+  font: 600 10px 'DM Sans';
+  cursor: pointer;
+}
+.btn-estado:hover, .action:hover {
+  background: var(--mint);
+}
 .table-footer {
   padding-top:  15px;
   display:  flex;

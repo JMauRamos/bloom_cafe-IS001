@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `
                     <div class="tarjeta_pedido" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between;">
-                            <h4>Pedido #${pedido.id}</h4>
-                            <span style="font-weight: bold; color: ${pedido.estado === 'PENDIENTE' ? 'orange' : 'green'};">
+                            <h4 class="num_pedido">Pedido #${pedido.id}</h4>
+                            <span class="estado ${pedido.estado}">
                                 ${pedido.estado}
                             </span>
                         </div>

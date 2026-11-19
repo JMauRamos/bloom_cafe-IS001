@@ -127,7 +127,7 @@
                                    {% if pedido.estado == 'PENDIENTE' %}
                                         <button class="btn-estado btn-preparar btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
-                                                  data-nuevo-estado="PREPARANDO">Preparar</button>
+                                                  data-nuevo-estado="PREPARANDO">Marcar Preparado</button>
                                    {% elif pedido.estado == 'PREPARANDO' %}
                                         <button class="btn-estado btn-listo btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
@@ -135,10 +135,10 @@
                                    {% elif pedido.estado == 'LISTO' %}
                                         <button class="btn-estado btn-entregar btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
-                                                  data-nuevo-estado="ENTREGADO">Entregar</button>
+                                                  data-nuevo-estado="ENTREGADO">Marcar Entregado</button>
                                    {% endif %}
-                                   <button type="button" class="btn-ver-detalle" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
-                                        <i class="bi bi-eye"></i> Ver
+                                   <button type="button" class="action" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
+                                        <i class="bi bi-eye"></i> Ver Detalle
                                    </button>
                               </td>
                               </tr>

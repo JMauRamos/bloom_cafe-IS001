@@ -1,0 +1,117 @@
+{% extends "base_empleados.html" %}
+{% load static %}
+
+{% block title %} Crear Producto {% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'css/productos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<main class="main">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">ADMINISTRACIÓN / CATÁLOGO / CREAR</p>
+            <h1>Crear Producto</h1>
+            <p class="sub">Completa los datos para agregar un nuevo producto.</p>
+        </div>
+        <a href="{% url 'productos_admin' %}" class="button secondary">← Volver</a>
+    </div>
+
+    <section class="panel">
+        <form method="POST" action="{% url 'crear_producto' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre del Producto</label>
+                    <input type="text" name="nombre" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Categoría</label>
+                    <select name="categoria" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea name="descripcion" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label class="form-label">Foto del Producto</label>
+                    <input type="file" name="foto_producto" class="form-control" accept="image/*">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="disponibilidad" id="checkDispo" checked>
+                        <label class="form-check-label" for="checkDispo">Producto Disponible</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">Ingredientes</h5>
+            <div class="ingredientes-container" style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; padding: 12px; border-radius: 8px;">
+                {% for ingrediente in ingredientes %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="ingredientes[]" 
+                           value="{{ ingrediente.id }}" id="ing_{{ ingrediente.id }}">
+                    <label class="form-check-label" for="ing_{{ ingrediente.id }}">
+                        {{ ingrediente.nombre }}
+                        {% if ingrediente.costo_extra > 0 %}
+                            <span class="badge bg-info text-dark">+${{ ingrediente.costo_extra }}</span>
+                        {% endif %}
+                        {% if ingrediente.opcional %}
+                            <span class="badge bg-secondary">Opcional</span>
+                        {% endif %}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">Tamaños y Precios</h5>
+            <div id="variantes-container">
+                <div class="row mb-2 variante-row">
+                    <div class="col-md-5">
+                        <select name="tamaño[]" class="form-select" required>
+                            <option value="">Seleccione Tamaño...</option>
+                            {% for tamaño in tamaños %}
+                                <option value="{{ tamaño.id }}">{{ tamaño.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="number" name="precio_variante[]" class="form-control" placeholder="Precio" step="0.01" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger w-100" onclick="eliminarVariante(this)">X</button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-success btn-sm mt-2" onclick="agregarVariante()">+ Agregar otro tamaño</button>
+
+            <hr>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'productos_admin' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar Producto</button>
+            </div>
+        </form>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/editarProducto.js' %}"></script>
+{% endblock %}

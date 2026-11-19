@@ -35,6 +35,14 @@ class Producto(models.Model):
     def __str__(self):
         return (f"{self.nombre}")
 
+    def cambiar_disponibilidad(self):
+        if self.disponibilidad:
+            self.disponibilidad = False
+        else:
+            self.disponibilidad = True
+
+        self.save(update_fields=['disponibilidad'])
+
 class VarianteProducto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name='variantes')
     tamaño = models.ForeignKey(Tamaño, on_delete=models.PROTECT)

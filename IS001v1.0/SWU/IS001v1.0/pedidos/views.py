@@ -9,13 +9,14 @@ from django.contrib import messages
 from datetime import date
 from .models import Pedido, DetallePedido, Modificacion
 from menu.models import VarianteProducto, Ingrediente, Producto, Categoria, Tamaño
+from usuarios.decorators import solo_duena
 
 # Create your views here.
 
 def ver_mis_pedidos(request):
     return render(request, 'pedidos/mis_pedidos.html')
 
-@login_required(login_url='inicio')
+@solo_duena
 def dashboard(request):
     return render(request, 'panel_admin/dashboard.html')
 
@@ -116,7 +117,7 @@ def productos_admin(request):
     contexto = {'productos': productos, 'total_productos': total_productos, 'productos_disponibles': productos_disponibles, 'categorias': categorias, 'tamaños': tamaños, 'ingredientes': ingredientes}
     return render(request, 'panel_admin/productos_admin.html', contexto)
 
-@login_required(login_url='inicio')
+@solo_duena
 def crear_producto(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -156,22 +157,36 @@ def crear_producto(request):
         if min_precio != float('inf'):
             producto.precio = min_precio
             producto.save()
-    
+        
+        messages.success(request, f'Producto "{producto.nombre}" creado correctamente.')
         return redirect('productos_admin')
+    
+    contexto = {
+        'categorias': Categoria.objects.all(),
+        'tamaños': Tamaño.objects.all(),
+        'ingredientes': Ingrediente.objects.all(),
+    }
+    return render(request, 'panel_admin/crear_producto.html', contexto)
 
-@login_required(login_url='inicio')
+@solo_duena
 def eliminar_producto(request, producto_id):
+
     if request.method == 'POST':
         producto = get_object_or_404(Producto, id=producto_id)
+        nombre_producto = producto.nombre
+
         try:
+            producto.variantes.all().delete()
             producto.delete()
-            messages.success(request, f'El producto "{producto.nombre}" fue eliminado correctamente.')
+            messages.success(request, f'El producto "{nombre_producto}" fue eliminado correctamente.')
+
         except ProtectedError:
             messages.error(request, 'No se puede eliminar este producto porque tiene pedidos asociados.')
+
         except Exception as e:
             messages.error(request, f'Error al eliminar: {e}')
 
-    return redirect('productos_admin') 
+    return redirect('productos_admin')
 
 @login_required(login_url='inicio')
 def editar_producto(request, producto_id):
@@ -232,6 +247,21 @@ def editar_producto(request, producto_id):
         'ingredientes_seleccionados': set(producto.ingredientes.values_list('id', flat=True)),
     }
     return render(request, 'panel_admin/editar_producto.html', contexto)
+
+@login_required(login_url='inicio')
+@require_POST
+def cambiar_disponibilidad(request, producto_id):
+
+    producto = get_object_or_404(Producto, id=producto_id)
+
+    producto.cambiar_disponibilidad()
+
+    if producto.disponibilidad:
+        messages.success(request, f'{producto.nombre} ahora está disponible.')
+    else:
+        messages.success(request, f'{producto.nombre} ahora no está disponible.')
+
+    return redirect('productos_admin')
 
 def checkout(request):
     if request.method == 'POST':

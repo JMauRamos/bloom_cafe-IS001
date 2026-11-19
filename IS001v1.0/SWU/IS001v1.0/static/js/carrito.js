@@ -1,6 +1,5 @@
 // static/js/carrito.js
 
-// Función para renderizar el carrito visualmente
 function actualizarVistaCarrito() {
     const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     const contenedor = document.querySelector('.productos_carrito');

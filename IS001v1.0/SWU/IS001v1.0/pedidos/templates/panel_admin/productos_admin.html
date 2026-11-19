@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static 'css/productos.css' %}">
 {% endblock %}
 
-  {% block contenido %}
+{% block contenido %}
   <main class="main">
     <div class="page-heading">
       <div>
@@ -15,7 +15,9 @@
         <h1>Gestión de productos</h1>
         <p class="sub">Administra el menú de tu cafetería.</p>
       </div>
-      <button class="button primary" id="addProduct" data-bs-toggle="modal" data-bs-target="#agregarProducto">＋ Agregar producto</button>
+      {% if user.rol == 'DUENA' %}
+      <a href="{% url 'crear_producto' %}" class="button primary"> ＋ Agregar producto </a>
+      {% endif %}
     </div>
 
     <section class="summary-bar" aria-label="Resumen de productos">
@@ -72,10 +74,20 @@
                 </span></td>
                 <td>
                   <div class="actions">
+                    {% if user.rol == 'DUENA' %}
                     <a class="action" href="{% url 'editar_producto' producto.id %}">Editar</a>
                     <button type="button" class="action delete" data-bs-toggle="modal" data-bs-target="#eliminarProductoModal" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}" data-url="{% url 'eliminar_producto' producto.id %}">
                       Eliminar
                     </button>
+                    {% endif %}
+                    <form method="POST" action="{% url 'cambiar_disponibilidad' producto.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="action">
+                          {% if not producto.disponibilidad %} Marcar Disponible
+                          {% else %} Marcar No Disponible
+                          {% endif %}
+                      </button>
+                    </form>
                   </div>
                 </td>
               </tr>
@@ -90,107 +102,6 @@
   {% endblock %}
 
   {% block modal %}
-  <div class="modal fade" id="agregarProducto" tabindex="-1" aria-labelledby="agregarProductoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <form method="POST" action="{% url 'crear_producto' %}" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="agregarProductoLabel">Agregar un Producto</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          
-          <div class="modal-body">
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Nombre del Producto</label>
-                <input type="text" name="nombre" class="form-control" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Categoría</label>
-                <select name="categoria" class="form-select" required>
-                  <option value="">Seleccione...</option>
-                  {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label class="form-label">Descripción</label>
-              <textarea name="descripcion" class="form-control" rows="2"></textarea>
-            </div>
-            
-            <div class="row mb-3">
-              <div class="col-md-8">
-                <label class="form-label">Foto del Producto</label>
-                <input type="file" name="foto_producto" class="form-control" accept="image/*">
-              </div>
-              <div class="col-md-4 d-flex align-items-end">
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" name="disponibilidad" id="checkDispo" checked>
-                  <label class="form-check-label" for="checkDispo">Disponible</label>
-                </div>
-              </div>
-            </div>
-
-            <hr>
-
-            <h5 class="mb-3">Ingredientes del Producto</h5>
-            <div class="ingredientes-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
-                {% for ingrediente in ingredientes %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="ingredientes[]" value="{{ ingrediente.id }}" id="ing_{{ ingrediente.id }}">
-                        <label class="form-check-label" for="ing_{{ ingrediente.id }}">
-                            {{ ingrediente.nombre }}
-                            {% if ingrediente.costo_extra > 0 %}
-                                <span class="badge bg-info text-dark">+${{ ingrediente.costo_extra }}</span>
-                            {% endif %}
-                            {% if ingrediente.opcional %}
-                                <span class="badge">Opcional</span>
-                            {% endif %}
-                        </label>
-                    </div>
-                {% empty %}
-                    <p class="text-muted">No hay ingredientes registrados. Agrega algunos en el admin.</p>
-                {% endfor %}
-            </div>
-            
-            <hr>
-
-            <h5 class="mb-3">Tamaños y Precios</h5>
-            <div id="variantes-container">
-              <div class="row mb-2 variante-row">
-                <div class="col-md-5">
-                  <select name="tamaño[]" class="form-select" required>
-                    <option value="">Seleccione Tamaño...</option>
-                    {% for tamaño in tamaños %}
-                      <option value="{{ tamaño.id }}">{{ tamaño.nombre }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="col-md-5">
-                  <input type="number" name="precio_variante[]" class="form-control" placeholder="Precio (ej. 50.00)" step="0.01" required>
-                </div>
-                <div class="col-md-2">
-                  <button type="button" class="btn btn-danger w-100" onclick="eliminarVariante(this)">X</button>
-                </div>
-              </div>
-            </div>
-            
-            <button type="button" class="btn btn-outline-success btn-sm mt-2" onclick="agregarVariante()">+ Agregar otro tamaño</button>
-          </div>
-          
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Guardar Producto</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <div class="modal fade" id="eliminarProductoModal" tabindex="-1" aria-labelledby="eliminarProductoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">

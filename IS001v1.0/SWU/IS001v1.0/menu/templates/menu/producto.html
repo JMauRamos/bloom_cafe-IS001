@@ -72,7 +72,7 @@
 
     <!-- AGREGAR -->
 
-    {% if producto.disponibilidad %}
+    {% if producto.puede_prepararse %}
         <button type="submit" class="agregar" data-producto-id="{{ producto.id }}" data-producto-nombre="{{ producto.nombre }}" data-producto-imagen="{% if producto.foto_producto %}{{ producto.foto_producto.url }}{% else %}{% static 'images/Logo.jpeg' %}{% endif %}" onclick="agregarAlCarrito()">
             Agregar al carrito - <span id="precio">${{producto.precio}}</span>
         </button>

@@ -1,0 +1,698 @@
+{% extends "base_empleados.html" %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Gestión de Ingredientes y Extras{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/productos.css' %}">
+<style>
+  [hidden] {
+    display: none !important;
+  }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<main class="main">
+
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">ADMINISTRACIÓN / CATÁLOGO</p>
+      <h1>Gestión de ingredientes y extras</h1>
+      <p class="sub">
+        Administra los ingredientes y complementos de Bloom Café.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="button primary"
+      id="botonAgregar"
+      data-bs-toggle="modal"
+      data-bs-target="#agregarRegistro">
+      ＋ Agregar ingrediente
+    </button>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div
+        class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Cerrar">
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <section class="summary-bar">
+    <span>
+      <strong>{{ ingredientes|length }}</strong> ingredientes registrados
+    </span>
+
+    <span class="summary-separator"></span>
+
+    <span>
+      <strong>{{ extras|length }}</strong> extras registrados
+    </span>
+  </section>
+
+  <section class="panel">
+
+    <div class="toolbar">
+      <label class="search">
+        <span>⌕</span>
+        <input
+          id="buscarElementos"
+          type="search"
+          placeholder="Buscar ingrediente..."
+          aria-label="Buscar ingrediente o extra">
+      </label>
+    </div>
+
+    <div class="category-tabs" role="tablist">
+      <button
+        type="button"
+        class="category-tab active"
+        data-tab="ingredientes"
+        aria-selected="true">
+        Ingredientes
+      </button>
+
+      <button
+        type="button"
+        class="category-tab"
+        data-tab="extras"
+        aria-selected="false">
+        Extras / Upgrades
+      </button>
+    </div>
+
+    <div class="table-wrap" id="panelIngredientes">
+      <table>
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Estado y disponibilidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody id="tablaIngredientes">
+          {% for ingrediente in ingredientes %}
+          <tr>
+            <td>
+              <span class="product-name">
+                {{ ingrediente.nombre }}
+              </span>
+            </td>
+
+            <td>
+              {% if ingrediente.disponibilidad %}
+                <span class="availability">Disponible</span>
+              {% else %}
+                <span class="availability low">No disponible</span>
+              {% endif %}
+
+              <form
+                method="POST"
+                action="{% url 'ingredientes_admin' %}"
+                style="display:inline-block; margin-left:12px;">
+
+                {% csrf_token %}
+
+                <input type="hidden" name="accion" value="cambiar_disponibilidad">
+                <input type="hidden" name="tipo" value="ingrediente">
+                <input type="hidden" name="registro_id" value="{{ ingrediente.id }}">
+
+                {% if ingrediente.disponibilidad %}
+                  <input type="hidden" name="disponibilidad" value="0">
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger">
+                    Marcar agotado
+                  </button>
+                {% else %}
+                  <input type="hidden" name="disponibilidad" value="1">
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-success">
+                    Marcar disponible
+                  </button>
+                {% endif %}
+              </form>
+            </td>
+
+            <td>
+              <div class="actions">
+                <button
+                  type="button"
+                  class="action botonEditar"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editarRegistro"
+                  data-registro-id="{{ ingrediente.id }}"
+                  data-registro-tipo="ingrediente"
+                  data-registro-nombre="{{ ingrediente.nombre }}">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="action delete botonEliminar"
+                  data-bs-toggle="modal"
+                  data-bs-target="#eliminarRegistro"
+                  data-registro-id="{{ ingrediente.id }}"
+                  data-registro-tipo="ingrediente"
+                  data-registro-nombre="{{ ingrediente.nombre }}">
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">
+              No hay ingredientes registrados.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap" id="panelExtras" hidden>
+      <table>
+        <thead>
+          <tr>
+            <th>Extra / Upgrade</th>
+            <th>Costo adicional</th>
+            <th>Estado y disponibilidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody id="tablaExtras">
+          {% for extra in extras %}
+          <tr>
+            <td>
+              <span class="product-name">
+                {{ extra.nombre }}
+              </span>
+            </td>
+
+            <td class="price">
+              ${{ extra.costo_extra }}
+            </td>
+
+            <td>
+              {% if extra.disponibilidad %}
+                <span class="availability">Disponible</span>
+              {% else %}
+                <span class="availability low">No disponible</span>
+              {% endif %}
+
+              <form
+                method="POST"
+                action="{% url 'ingredientes_admin' %}"
+                style="display:inline-block; margin-left:12px;">
+
+                {% csrf_token %}
+
+                <input type="hidden" name="accion" value="cambiar_disponibilidad">
+                <input type="hidden" name="tipo" value="extra">
+                <input type="hidden" name="registro_id" value="{{ extra.id }}">
+
+                {% if extra.disponibilidad %}
+                  <input type="hidden" name="disponibilidad" value="0">
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger">
+                    Marcar agotado
+                  </button>
+                {% else %}
+                  <input type="hidden" name="disponibilidad" value="1">
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-success">
+                    Marcar disponible
+                  </button>
+                {% endif %}
+              </form>
+            </td>
+
+            <td>
+              <div class="actions">
+                <button
+                  type="button"
+                  class="action botonEditar"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editarRegistro"
+                  data-registro-id="{{ extra.id }}"
+                  data-registro-tipo="extra"
+                  data-registro-nombre="{{ extra.nombre }}"
+                  data-registro-costo="{{ extra.costo_extra|unlocalize }}">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="action delete botonEliminar"
+                  data-bs-toggle="modal"
+                  data-bs-target="#eliminarRegistro"
+                  data-registro-id="{{ extra.id }}"
+                  data-registro-tipo="extra"
+                  data-registro-nombre="{{ extra.nombre }}">
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">
+              No hay extras registrados.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span id="textoSeccion">
+        Ingredientes de Bloom Café
+      </span>
+
+      <span class="updated-note">
+        Información actualizada desde MySQL
+      </span>
+    </div>
+
+  </section>
+</main>
+{% endblock %}
+
+{% block modal %}
+<div
+  class="modal fade"
+  id="agregarRegistro"
+  tabindex="-1"
+  aria-labelledby="agregarRegistroLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <form method="POST" action="{% url 'ingredientes_admin' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="accion" value="agregar">
+        <input type="hidden" name="tipo" id="tipoRegistro" value="ingrediente">
+
+        <div class="modal-header">
+          <h1
+            class="modal-title fs-5"
+            id="agregarRegistroLabel">
+            Agregar ingrediente
+          </h1>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Cerrar">
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombreRegistro" class="form-label">
+              Nombre
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="nombreRegistro"
+              name="nombre"
+              maxlength="100"
+              placeholder="Nombre del ingrediente"
+              required>
+          </div>
+
+          <div class="mb-3" id="contenedorCosto" hidden>
+            <label for="costoRegistro" class="form-label">
+              Costo adicional ($)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              id="costoRegistro"
+              name="costo_extra"
+              min="0"
+              max="999.99"
+              step="0.01"
+              placeholder="0.00"
+              disabled>
+          </div>
+
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="disponibilidad"
+              id="disponibilidadRegistro"
+              checked>
+
+            <label
+              class="form-check-label"
+              for="disponibilidadRegistro">
+              Disponible
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="editarRegistro"
+  tabindex="-1"
+  aria-labelledby="editarRegistroLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <form method="POST" action="{% url 'ingredientes_admin' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="accion" value="editar">
+        <input type="hidden" name="tipo" id="tipoEditar">
+        <input type="hidden" name="registro_id" id="idEditar">
+
+        <div class="modal-header">
+          <h1
+            class="modal-title fs-5"
+            id="editarRegistroLabel">
+            Editar ingrediente
+          </h1>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Cerrar">
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombreEditar" class="form-label">
+              Nombre
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="nombreEditar"
+              name="nombre"
+              maxlength="100"
+              required>
+          </div>
+
+          <div class="mb-3" id="contenedorCostoEditar" hidden>
+            <label for="costoEditar" class="form-label">
+              Costo adicional ($)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              id="costoEditar"
+              name="costo_extra"
+              min="0"
+              max="999.99"
+              step="0.01"
+              disabled>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal">
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="eliminarRegistro"
+  tabindex="-1"
+  aria-labelledby="eliminarRegistroLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+
+      <div class="modal-header bg-danger text-white">
+        <h5
+          class="modal-title"
+          id="eliminarRegistroLabel">
+          Confirmar eliminación
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar">
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p id="mensajeEliminar">
+          ¿Estás seguro de que deseas eliminar este registro?
+        </p>
+
+        <p
+          class="fw-bold text-center"
+          id="nombreEliminar">
+        </p>
+
+        <p class="text-muted small text-center">
+          Esta acción no se puede deshacer.
+        </p>
+
+        <p class="text-muted small text-center">
+          Los registros utilizados en pedidos existentes no podrán eliminarse.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal">
+          Cancelar
+        </button>
+
+        <form
+          method="POST"
+          action="{% url 'ingredientes_admin' %}">
+          {% csrf_token %}
+
+          <input type="hidden" name="accion" value="eliminar">
+          <input type="hidden" name="tipo" id="tipoEliminar">
+          <input type="hidden" name="registro_id" id="idEliminar">
+
+          <button type="submit" class="btn btn-danger">
+            Sí, eliminar
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+  const botones = document.querySelectorAll('[data-tab]');
+  const panelIngredientes = document.getElementById('panelIngredientes');
+  const panelExtras = document.getElementById('panelExtras');
+  const buscador = document.getElementById('buscarElementos');
+  const textoSeccion = document.getElementById('textoSeccion');
+
+  const botonAgregar = document.getElementById('botonAgregar');
+  const tituloModal = document.getElementById('agregarRegistroLabel');
+  const tipoRegistro = document.getElementById('tipoRegistro');
+  const nombreRegistro = document.getElementById('nombreRegistro');
+  const contenedorCosto = document.getElementById('contenedorCosto');
+  const costoRegistro = document.getElementById('costoRegistro');
+
+  const botonesEditar = document.querySelectorAll('.botonEditar');
+  const tituloEditar = document.getElementById('editarRegistroLabel');
+  const tipoEditar = document.getElementById('tipoEditar');
+  const idEditar = document.getElementById('idEditar');
+  const nombreEditar = document.getElementById('nombreEditar');
+  const contenedorCostoEditar = document.getElementById('contenedorCostoEditar');
+  const costoEditar = document.getElementById('costoEditar');
+
+  const botonesEliminar = document.querySelectorAll('.botonEliminar');
+  const tipoEliminar = document.getElementById('tipoEliminar');
+  const idEliminar = document.getElementById('idEliminar');
+  const nombreEliminar = document.getElementById('nombreEliminar');
+  const mensajeEliminar = document.getElementById('mensajeEliminar');
+
+  let pestanaActual = 'ingredientes';
+
+  function actualizarFormulario() {
+    const esExtra = pestanaActual === 'extras';
+
+    tipoRegistro.value = esExtra ? 'extra' : 'ingrediente';
+
+    botonAgregar.textContent = esExtra
+      ? '＋ Agregar extra'
+      : '＋ Agregar ingrediente';
+
+    tituloModal.textContent = esExtra
+      ? 'Agregar Extra / Upgrade'
+      : 'Agregar ingrediente';
+
+    nombreRegistro.placeholder = esExtra
+      ? 'Nombre del extra'
+      : 'Nombre del ingrediente';
+
+    contenedorCosto.hidden = !esExtra;
+    costoRegistro.disabled = !esExtra;
+    costoRegistro.required = esExtra;
+
+    if (esExtra && !costoRegistro.value) {
+      costoRegistro.value = '0.00';
+    }
+  }
+
+  botones.forEach(function(boton) {
+    boton.addEventListener('click', function() {
+      pestanaActual = this.dataset.tab;
+
+      botones.forEach(function(b) {
+        const activa = b.dataset.tab === pestanaActual;
+        b.classList.toggle('active', activa);
+        b.setAttribute('aria-selected', activa);
+      });
+
+      panelIngredientes.hidden = pestanaActual !== 'ingredientes';
+      panelExtras.hidden = pestanaActual !== 'extras';
+
+      buscador.value = '';
+
+      buscador.placeholder = pestanaActual === 'ingredientes'
+        ? 'Buscar ingrediente...'
+        : 'Buscar extra...';
+
+      textoSeccion.textContent = pestanaActual === 'ingredientes'
+        ? 'Ingredientes de Bloom Café'
+        : 'Extras / Upgrades de Bloom Café';
+
+      document.querySelectorAll(
+        '#tablaIngredientes tr, #tablaExtras tr'
+      ).forEach(function(fila) {
+        fila.hidden = false;
+      });
+
+      actualizarFormulario();
+    });
+  });
+
+  buscador.addEventListener('input', function() {
+    const texto = this.value.toLowerCase().trim();
+
+    const tabla = pestanaActual === 'ingredientes'
+      ? document.getElementById('tablaIngredientes')
+      : document.getElementById('tablaExtras');
+
+    tabla.querySelectorAll('tr').forEach(function(fila) {
+      fila.hidden = !fila.textContent.toLowerCase().includes(texto);
+    });
+  });
+
+  botonesEditar.forEach(function(boton) {
+    boton.addEventListener('click', function() {
+      const esExtra = this.dataset.registroTipo === 'extra';
+
+      idEditar.value = this.dataset.registroId;
+      tipoEditar.value = esExtra ? 'extra' : 'ingrediente';
+      nombreEditar.value = this.dataset.registroNombre;
+
+      tituloEditar.textContent = esExtra
+        ? 'Editar Extra / Upgrade'
+        : 'Editar ingrediente';
+
+      contenedorCostoEditar.hidden = !esExtra;
+      costoEditar.disabled = !esExtra;
+      costoEditar.required = esExtra;
+
+      costoEditar.value = esExtra
+        ? this.dataset.registroCosto
+        : '';
+    });
+  });
+
+  botonesEliminar.forEach(function(boton) {
+    boton.addEventListener('click', function() {
+      const esExtra = this.dataset.registroTipo === 'extra';
+
+      tipoEliminar.value = esExtra ? 'extra' : 'ingrediente';
+      idEliminar.value = this.dataset.registroId;
+      nombreEliminar.textContent = this.dataset.registroNombre;
+
+      mensajeEliminar.textContent = esExtra
+        ? '¿Estás seguro de que deseas eliminar este Extra / Upgrade?'
+        : '¿Estás seguro de que deseas eliminar este ingrediente?';
+    });
+  });
+
+  if (new URLSearchParams(window.location.search).get('tab') === 'extras') {
+    document.querySelector('[data-tab="extras"]').click();
+  }
+
+  actualizarFormulario();
+</script>
+{% endblock %}

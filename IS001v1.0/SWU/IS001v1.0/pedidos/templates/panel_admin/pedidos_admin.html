@@ -127,7 +127,7 @@
                                    {% if pedido.estado == 'PENDIENTE' %}
                                         <button class="btn-estado btn-preparar btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
-                                                  data-nuevo-estado="PREPARANDO">Preparar</button>
+                                                  data-nuevo-estado="PREPARANDO">Marcar Preparado</button>
                                    {% elif pedido.estado == 'PREPARANDO' %}
                                         <button class="btn-estado btn-listo btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
@@ -135,10 +135,10 @@
                                    {% elif pedido.estado == 'LISTO' %}
                                         <button class="btn-estado btn-entregar btn-avanzar" 
                                                   data-id="{{ pedido.id }}" 
-                                                  data-nuevo-estado="ENTREGADO">Entregar</button>
+                                                  data-nuevo-estado="ENTREGADO">Marcar Entregado</button>
                                    {% endif %}
-                                   <button type="button" class="btn-ver-detalle" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
-                                        <i class="bi bi-eye"></i> Ver
+                                   <button type="button" class="action" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
+                                        <i class="bi bi-eye"></i> Ver Detalle
                                    </button>
                               </td>
                               </tr>
@@ -176,12 +176,12 @@
                               <div class="col-md-6">
                                    <p class="mb-1"><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
                                    <p class="mb-1"><strong>Teléfono:</strong> <span id="detalle-telefono"></span></p>
-                                   <p class="mb-1"><strong>Lugar:</strong> <span id="detalle-lugar"></span></p>
+                                   <p class="mb-1"><strong>Lugar de Entrega:</strong> <span id="detalle-lugar"></span></p>
                               </div>
                               <div class="col-md-6">
                                    <p class="mb-1"><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
                                    <p class="mb-1"><strong>Hora:</strong> <span id="detalle-hora"></span></p>
-                                   <p class="mb-1"><strong>Método de pago:</strong> <span id="detalle-pago"></span></p>
+                                   <p class="mb-1"><strong>Método de Pago:</strong> <span id="detalle-pago"></span></p>
                               </div>
                          </div>
                          <hr>

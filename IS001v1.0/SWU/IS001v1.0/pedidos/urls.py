@@ -11,6 +11,7 @@ urlpatterns = [
     path('productos/crear/', views.crear_producto, name='crear_producto'),
     path('productos/eliminar/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
     path('productos/editar/<int:producto_id>/', views.editar_producto, name='editar_producto'),
+    path('productos/disponibilidad/<int:producto_id>/', views.cambiar_disponibilidad, name='cambiar_disponibilidad'),
     path('api/pedido/<int:pedido_id>/cambiar_estado/', views.avanzar_estado_pedido, name='cambiar_estado_pedido'),
     path('ingredientes/', views.ingredientes_admin, name='ingredientes_admin'),
     path('extras/', views.extras_admin, name='extras_admin'),

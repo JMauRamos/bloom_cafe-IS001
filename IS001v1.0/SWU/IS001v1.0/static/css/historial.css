@@ -211,6 +211,10 @@ body {
     font-size: 17px;
 }
 
+.num_pedido {
+    font-size: 1rem;
+}
+
 .fecha {
     color: var(--texto-suave);
     font-size: 12px;
@@ -222,11 +226,31 @@ body {
     gap: 6px;
     padding: 6px 10px;
     border-radius: 30px;
-    background: var(--verde-claro);
-    color: var(--verde-oscuro);
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 900;
     white-space: nowrap;
+    list-style: none;
+}
+
+.estado.Pendiente {
+    color: rgb(255, 230, 0);
+    font-weight: 900;
+}
+
+.estado.Preparacion {
+    color: rgb(226, 133, 2);
+}
+
+.estado.Listo {
+    color: var(--verde);
+}
+
+.estado.Entregado {
+    color: var(--verde-oscuro);
+}
+
+.estado.Cancelado {
+    color: maroon;
 }
 
 .estado::before {
@@ -235,11 +259,6 @@ body {
     height: 6px;
     border-radius: 50%;
     background: currentColor;
-}
-
-.estado.preparacion {
-    background: #fff2dc;
-    color: #95600e;
 }
 
 .detalles {

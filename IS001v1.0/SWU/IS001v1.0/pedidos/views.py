@@ -10,6 +10,7 @@ from django.contrib import messages
 from datetime import date
 from .models import Pedido, DetallePedido, Modificacion
 from menu.models import VarianteProducto, Ingrediente, Producto, Categoria, Tamaño
+from usuarios.decorators import solo_duena
 from decimal import Decimal, InvalidOperation
 from django.urls import reverse
 
@@ -19,9 +20,9 @@ def ver_mis_pedidos(request):
 
 
 @login_required(login_url='inicio')
+@solo_duena
 def dashboard(request):
     return render(request, 'panel_admin/dashboard.html')
-
 
 @login_required(login_url='inicio')
 def pedidos_admin(request):
@@ -143,8 +144,8 @@ def productos_admin(request):
 
     return render(request, 'panel_admin/productos_admin.html', contexto)
 
-
 @login_required(login_url='inicio')
+@solo_duena
 def crear_producto(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -192,20 +193,27 @@ def crear_producto(request):
             producto.precio = min_precio
             producto.save()
 
+        messages.success(request, f'Producto "{producto.nombre}" creado correctamente.')
         return redirect('productos_admin')
 
+    contexto = {
+        'categorias': Categoria.objects.all(),
+        'tamaños': Tamaño.objects.all(),
+        'ingredientes': Ingrediente.objects.filter(es_extra=False)
+    }
+    return render(request, 'panel_admin/crear_producto.html', contexto)
 
-@login_required(login_url='inicio')
+@solo_duena
 def eliminar_producto(request, producto_id):
+
     if request.method == 'POST':
         producto = get_object_or_404(Producto, id=producto_id)
+        nombre_producto = producto.nombre
 
         try:
+            producto.variantes.all().delete()
             producto.delete()
-            messages.success(
-                request,
-                f'El producto "{producto.nombre}" fue eliminado correctamente.'
-            )
+            messages.success(request, f'El producto "{nombre_producto}" fue eliminado correctamente.')
 
         except ProtectedError:
             messages.error(
@@ -295,13 +303,22 @@ def editar_producto(request, producto_id):
             producto.ingredientes.values_list('id', flat=True)
         ),
     }
+    return render(request, 'panel_admin/editar_producto.html', contexto)
 
-    return render(
-        request,
-        'panel_admin/editar_producto.html',
-        contexto
-    )
+@login_required(login_url='inicio')
+@require_POST
+def cambiar_disponibilidad(request, producto_id):
 
+    producto = get_object_or_404(Producto, id=producto_id)
+
+    producto.cambiar_disponibilidad()
+
+    if producto.disponibilidad:
+        messages.success(request, f'{producto.nombre} ahora está disponible.')
+    else:
+        messages.success(request, f'{producto.nombre} ahora no está disponible.')
+
+    return redirect('productos_admin')
 
 def checkout(request):
     if request.method == 'POST':

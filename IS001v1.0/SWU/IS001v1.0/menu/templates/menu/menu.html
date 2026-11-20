@@ -44,7 +44,16 @@
                                     <div class="precios">
                                         <p>$ {{ producto.precio }}</p>
                                     </div>
-                                    <a class="comprar" href="{%url 'ver_producto' producto.id%}">Agregar</a>
+                                    {% if producto.puede_prepararse %}
+    <a class="comprar" href="{% url 'ver_producto' producto.id %}">
+        Agregar
+    </a>
+{% else %}
+    <span class="comprar no-disponible">
+        No disponible
+    </span>
+{% endif %}
+
                                 </div>
                             </div>
                         </div>

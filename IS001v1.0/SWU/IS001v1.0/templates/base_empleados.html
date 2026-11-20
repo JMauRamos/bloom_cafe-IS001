@@ -29,6 +29,11 @@
         <a href="{%url 'pedidos_admin' %}" class="{% if request.resolver_match.url_name == 'pedidos_admin' %}active{% endif %}"><span>▤</span> Pedidos {% if pedidos_pendientes_count > 0 %} <i class="badge"> {{ pedidos_pendientes_count }} </i> {% endif %} </a>
         <a href="{%url 'productos_admin' %}" class="{% if 'producto' in request.resolver_match.url_name %}active{% endif %}"><span>♧</span>Productos</a>
         {% if user.rol == 'DUENA' %}
+        <a href="{% url 'ingredientes_admin' %}"
+       class="{% if request.resolver_match.url_name == 'ingredientes_admin' %}active{% endif %}">
+       <span>✦</span>Ingredientes y Extras
+  </a>
+
         <a href="#reportes"><span>▥</span>Reportes</a>
         {% endif %}
       </nav>

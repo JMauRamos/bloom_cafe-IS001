@@ -36,11 +36,11 @@ function actualizarVistaCarrito() {
                     ${extrasHtml}
                     <div class="editar_producto"> 
                         <div class="cantidad_producto">
-                            <div class="mas_menos" onclick="cambiarCantidadCarrito(${index}, -1)"><i class="bi bi-dash"></i></div>
+                            <div class="mas_menos" onclick="event.stopPropagation(); cambiarCantidadCarrito(${index}, -1)"><i class="bi bi-dash"></i></div>
                             <div><span class="cantidad">${item.cantidad}</span></div>
-                            <div class="mas_menos" onclick="cambiarCantidadCarrito(${index}, 1)"><i class="bi bi-plus"></i></div>
+                            <div class="mas_menos" onclick="event.stopPropagation(); cambiarCantidadCarrito(${index}, 1)"><i class="bi bi-plus"></i></div>
                         </div>
-                        <div class="eliminar_producto" onclick="eliminarDelCarrito(${index})">
+                        <div class="eliminar_producto" onclick="event.stopPropagation(); eliminarDelCarrito(${index})">
                             <i class="bi bi-trash-fill"></i>
                         </div>
                     </div>

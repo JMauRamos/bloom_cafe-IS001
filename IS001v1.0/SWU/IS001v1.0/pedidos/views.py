@@ -7,11 +7,12 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.db.models import ProtectedError
 from django.contrib import messages
-from datetime import date
 from .models import Pedido, DetallePedido, Modificacion
 from menu.models import VarianteProducto, Ingrediente, Producto, Categoria, Tamaño
+from usuarios.models import Empleado
 from usuarios.decorators import solo_duena
 from decimal import Decimal, InvalidOperation
+from datetime import date, time, datetime, timedelta
 from django.urls import reverse
 
 
@@ -65,7 +66,7 @@ def avanzar_estado_pedido(request, pedido_id):
             'error': 'El pedido ya está finalizado'
         }, status=400)
 
-    pedido.avanzar_estado()
+    pedido.avanzar_estado(empleado=request.user)
 
     return JsonResponse({
         'status': 'success',
@@ -114,6 +115,7 @@ def api_detalle_pedido(request, pedido_id):
             'metodo_pago': pedido.get_metodo_pago_display(),
             'total': float(pedido.total),
             'detalles': detalles_list,
+            'empleado_preparacion': pedido.empleado_preparacion.first_name + ' ' + pedido.empleado_preparacion.last_name if pedido.empleado_preparacion else 'Sin asignar',
         }
 
         return JsonResponse(data)
@@ -320,6 +322,19 @@ def cambiar_disponibilidad(request, producto_id):
 
     return redirect('productos_admin')
 
+def horarios_pedido(hora_inicio, hora_fin):
+    horarios = []
+    minutos_actuales = hora_inicio.hour * 60 + hora_inicio.minute
+    minutos_fin = hora_fin.hour * 60 + hora_fin.minute
+    
+    while minutos_actuales <= minutos_fin:
+        h = minutos_actuales // 60
+        m = minutos_actuales % 60
+        horarios.append(time(h, m))
+        minutos_actuales += 10
+    
+    return horarios
+
 def checkout(request):
     if request.method == 'POST':
         try:
@@ -330,6 +345,41 @@ def checkout(request):
             if not carrito:
                 return JsonResponse({
                     'error': 'El carrito está vacío'
+                }, status=400)
+
+            try:
+                fecha_entrega = datetime.strptime(datos.get('fecha'), '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                return JsonResponse({
+                    'error': 'La fecha de entrega no es válida.'
+                }, status=400)
+            
+            if fecha_entrega < date.today():
+                return JsonResponse({
+                    'error': 'No puedes programar un pedido para una fecha pasada.'
+                }, status=400)
+            
+            try:
+                hora_entrega = datetime.strptime(datos.get('hora'), '%H:%M').time()
+            except (ValueError, TypeError):
+                return JsonResponse({
+                    'error': 'La hora de entrega no es válida.'
+                }, status=400)
+            
+            en_manana = time(7, 0) <= hora_entrega <= time(11, 0)
+            en_tarde = time(17, 0) <= hora_entrega <= time(21, 0)
+            
+            if not (en_manana or en_tarde):
+                return JsonResponse({
+                    'error': 'Horario no disponible. Solo se permite de 7:00 a 11:00 AM o de 5:00 a 9:00 PM.'
+                }, status=400)
+            
+            fecha_hora_entrega = datetime.combine(fecha_entrega, hora_entrega)
+            ahora_con_margen = datetime.now() + timedelta(minutes=10)
+            
+            if fecha_hora_entrega < ahora_con_margen:
+                return JsonResponse({
+                    'error': f'La hora de entrega debe ser al menos {10} minutos después de la hora actual.'
                 }, status=400)
 
             with transaction.atomic():
@@ -455,7 +505,16 @@ def checkout(request):
                 'error': 'Hubo un error al procesar el pedido en el servidor.'
             }, status=500)
 
-    return render(request, 'pedidos/checkout.html')
+    horarios_manana = horarios_pedido(time(7, 0), time(11, 0))
+    horarios_tarde = horarios_pedido(time(17, 0), time(21, 0))
+    
+    contexto = {
+        'horarios_manana': horarios_manana,
+        'horarios_tarde': horarios_tarde,
+        'hoy': date.today(),
+    }
+
+    return render(request, 'pedidos/checkout.html', contexto)
 
 
 def api_mis_pedidos(request, telefono):
@@ -716,3 +775,102 @@ def extras_admin(request):
     return render(request, 'panel_admin/extras_admin.html', {
         'extras': extras
     })
+
+@login_required(login_url='inicio')
+@solo_duena
+def empleados(request):
+    empleados = Empleado.objects.filter(rol='Empleado')
+    
+    contexto = {
+        'empleados': empleados,
+    }
+    return render(request, 'panel_admin/empleados.html', contexto)
+
+@login_required(login_url='inicio')
+@solo_duena
+def crear_empleado(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        rol = request.POST.get('rol', 'EMPLEADO')
+
+        if Empleado.objects.filter(username=username).exists():
+            messages.error(request, f'El nombre de usuario "{username}" ya está en uso.')
+            return render(request, 'panel_admin/crear_empleado.html')
+
+        try:
+            empleado = Empleado.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password,
+                rol=rol,
+            )
+            messages.success(
+                request, 
+                f'Empleado "{empleado.first_name} {empleado.last_name}" creado correctamente.'
+            )
+            return redirect('empleados')
+        except Exception as e:
+            messages.error(request, f'Error al crear el empleado: {e}')
+            return render(request, 'panel_admin/crear_empleado.html')
+    
+    return render(request, 'panel_admin/crear_empleado.html')
+
+@login_required(login_url='inicio')
+@solo_duena
+def editar_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, id=empleado_id)
+    
+    if request.method == 'POST':
+        empleado.username = request.POST.get('username', '').strip()
+        empleado.first_name = request.POST.get('first_name', '').strip()
+        empleado.last_name = request.POST.get('last_name', '').strip()
+        empleado.email = request.POST.get('email', '').strip()
+        empleado.password = request.POST.get('password', '')
+        empleado.rol = request.POST.get('rol', 'EMPLEADO')
+    
+        messages.success(
+            request,
+            f'Producto "{empleado.first_name} {empleado.last_name}" actualizado.'
+        )
+    
+        return redirect('empleados')
+    
+    contexto = {
+        'empleado': empleado,
+    }
+    
+    return render(request, 'panel_admin/editar_empleado.html', contexto)
+
+@login_required(login_url='inicio')
+@solo_duena
+def eliminar_empleado(request, empleado_id):
+    if request.method == 'POST':
+        empleado = get_object_or_404(Empleado, id=empleado_id)
+        nombre_empleado = f"{empleado.first_name} {empleado.last_name}".strip() or empleado.username
+
+        if empleado.rol != 'EMPLEADO':
+            messages.error(request, 'Solo puedes eliminar empleados, no dueñas.')
+            return redirect('empleados')
+    
+        try:
+            empleado.delete()
+            messages.success(request, f'El empleado "{nombre_empleado}" fue eliminado correctamente.')
+    
+        except ProtectedError:
+            messages.error(
+                request,
+                'No se puede eliminar este empleado porque tiene pedidos asociados.'
+            )
+    
+        except Exception as e:
+            messages.error(request, f'Error al eliminar: {e}')
+    
+        return redirect('empleados')
+
+    return redirect('empleados')

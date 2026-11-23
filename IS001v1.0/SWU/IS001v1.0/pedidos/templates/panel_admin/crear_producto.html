@@ -21,7 +21,7 @@
     <section class="panel">
         <form method="POST" action="{% url 'crear_producto' %}" enctype="multipart/form-data">
             {% csrf_token %}
-
+            
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Nombre del Producto</label>
@@ -62,7 +62,7 @@
             <div class="ingredientes-container" style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; padding: 12px; border-radius: 8px;">
                 {% for ingrediente in ingredientes %}
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="ingredientes[]"
+                    <input class="form-check-input" type="checkbox" name="ingredientes[]" 
                            value="{{ ingrediente.id }}" id="ing_{{ ingrediente.id }}">
                     <label class="form-check-label" for="ing_{{ ingrediente.id }}">
                         {{ ingrediente.nombre }}

@@ -1,0 +1,87 @@
+{% extends "base_empleados.html" %}
+{% load static %}
+
+{% block title %} Empleados {% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'css/productos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<main class="main">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">ADMINISTRACIÓN / EMPLEADOS</p>
+            <h1>Gestión de empleados</h1>
+            <p class="sub">Administra los empleados de la cafetería.</p>
+        </div>
+        {% if user.rol == 'DUENA' %}
+        <a href="{% url 'crear_empleado' %}" class="button primary"> ＋ Agregar empleado </a>
+        {% endif %}
+    </div>
+
+    <section class="panel">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Acciones</th>
+                </thead>
+                <tbody id="productsTable">
+                {% for empleado in empleados %}
+                    <tr>
+                        <td>{{empleado.first_name}} </td>
+                        <td>{{empleado.last_name}}</td>
+                        <td>{{empleado.username}}</td>
+                        <td>
+                        <div class="actions">
+                            {% if user.rol == 'DUENA' %}
+                            <a class="action" href="{% url 'editar_empleado' empleado.id %}">Editar</a>
+                            <button type="button" class="action delete" data-bs-toggle="modal" data-bs-target="#eliminarEmpleadoModal" data-id="{{ empleado.id }}" data-nombre="{{ empleado.first_name }} {{ empleado.last_name }}" data-url="{% url 'eliminar_empleado' empleado.id %}">
+                            Eliminar
+                            </button>
+                            {% endif %}
+                        </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="eliminarEmpleadoModal" tabindex="-1" aria-labelledby="eliminarEmpleadoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="eliminarEmpleadoLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar el siguiente empleado:</p>
+                    <p class="fw-bold text-center" id="eliminarNombreEmpleado"></p>
+                    <p class="text-muted small text-center">Esta acción no se puede deshacer.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formEliminarEmpleado" method="POST" action="">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+  
+{% block scripts %}
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/adminEmpleados.js' %}"></script>
+{% endblock %}

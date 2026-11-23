@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -14,10 +15,13 @@ class Pedido(models.Model):
     hora_entrega = models.TimeField(verbose_name='Hora de Entrega')
     lugar_entrega = models.CharField(max_length=20, choices=LUGARES_ENTREGA)
     metodo_pago = models.CharField(max_length=20, choices=METODOS_PAGO)
+    empleado_preparacion = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name='pedidos_preparados', verbose_name='Empleado que preparó')
 
-    def avanzar_estado(self):
+    def avanzar_estado(self, empleado=None):
         if self.estado == 'PENDIENTE':
             self.estado = 'PREPARANDO'
+            if empleado is not None and self.empleado_preparacion is None:
+                self.empleado_preparacion = empleado
         elif self.estado == 'PREPARANDO':
             self.estado = 'LISTO'
         elif self.estado == 'LISTO':

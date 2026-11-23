@@ -40,11 +40,25 @@
                     <div class="opciones_detalles">
                         <div class="opcion">
                             <label for="fecha"><i class="bi bi-calendar-minus-fill"></i></label>
-                            <input type="date" id="fecha" name="fecha" required>
+                            <input type="date" id="fecha" name="fecha" min="{{ hoy|date:'Y-m-d' }}" required>
                         </div>
                         <div class="opcion">
                             <label for="hora"><i class="bi bi-clock-fill"></i></label>
-                            <input type="time" id="hora" name="hora" step="600" required>
+                            <select id="hora" name="hora" required class="form-select">
+                                <option value="">Selecciona una hora...</option>
+                                
+                                <optgroup label="Mañana (7:00 - 11:00)">
+                                    {% for hora in horarios_manana %}
+                                        <option value="{{ hora|time:'H:i' }}">{{ hora|time:'g:i A' }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                
+                                <optgroup label="Tarde (5:00 - 9:00 PM)">
+                                    {% for hora in horarios_tarde %}
+                                        <option value="{{ hora|time:'H:i' }}">{{ hora|time:'g:i A' }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            </select>
                         </div>
                     </div>
                 </div>

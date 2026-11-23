@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('detalle-hora').textContent = data.hora;
                 document.getElementById('detalle-pago').textContent = data.metodo_pago;
                 document.getElementById('detalle-total').textContent = data.total.toFixed(2);
+                document.getElementById('detalle-empleado').textContent = data.empleado_preparacion;
                 
                 let html = '';
                 data.detalles.forEach(detalle => {

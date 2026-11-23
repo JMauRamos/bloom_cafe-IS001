@@ -1,8 +1,59 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form_detalles');
     const botonConfirmar = document.getElementById('confirmar_pedido');
+    const fechaInput = document.getElementById('fecha');
+    const horaSelect = document.getElementById('hora');
 
     if (!form) return;
+
+        const MARGEN_MINUTOS = 10;
+    
+    function actualizarHorasDisponibles() {
+        if (!fechaInput || !horaSelect) return;
+        
+        const fechaSeleccionada = fechaInput.value;
+        if (!fechaSeleccionada) return;
+
+        const hoy = new Date();
+        const año = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dia = String(hoy.getDate()).padStart(2, '0');
+        const fechaHoy = `${año}-${mes}-${dia}`;
+
+        const esHoy = fechaSeleccionada === fechaHoy;
+
+        const ahora = new Date();
+        ahora.setMinutes(ahora.getMinutes() + MARGEN_MINUTOS);
+        const horaMinima = ahora.getHours() * 60 + ahora.getMinutes();
+
+        const opciones = horaSelect.querySelectorAll('option[value]');
+        opciones.forEach(opcion => {
+            const valor = opcion.value;
+            if (!valor) return;
+
+            const [h, m] = valor.split(':').map(Number);
+            const minutosOpcion = h * 60 + m;
+
+            if (esHoy && minutosOpcion < horaMinima) {
+                opcion.disabled = true;
+                if (!opcion.textContent.includes('(No disponible)')) {
+                    opcion.textContent += ' (No disponible)';
+                }
+            } else {
+                opcion.disabled = false;
+                opcion.textContent = opcion.textContent.replace(' (No disponible)', '');
+            }
+        });
+
+        if (horaSelect.selectedOptions[0]?.disabled) {
+            horaSelect.value = '';
+        }
+    }
+
+    if (fechaInput) {
+        fechaInput.addEventListener('change', actualizarHorasDisponibles);
+        actualizarHorasDisponibles();
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();

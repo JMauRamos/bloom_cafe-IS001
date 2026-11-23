@@ -1,7 +1,7 @@
 {% extends "base_empleados.html" %}
 {% load static %}
 
-{% block title %} Editar {{ producto.nombre }} {% endblock %}
+{% block title %} Editar Empleado {% endblock %}
 
 {% block styles %}
   <link rel="stylesheet" href="{% static 'css/productos.css' %}">
@@ -11,8 +11,8 @@
 <main class="main">
     <div class="page-heading">
         <div>
-            <p class="eyebrow">ADMINISTRACIÓN / EMPLEADOS / CREAR</p>
-            <h1>Crear Empleado</h1>
+            <p class="eyebrow">ADMINISTRACIÓN / EMPLEADOS / EDITAR</p>
+            <h1>Editar Empleado</h1>
             <p class="sub">Completa los datos para editar un empleado.</p>
         </div>
         <a href="{% url 'empleados' %}" class="button secondary">← Volver</a>
@@ -57,14 +57,14 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Contraseña</label>
-                    <input type="password" name="password" class="form-control" value="{{ empleado.password }}" required minlength="8">
-                    <small class="text-muted">Mínimo 8 caracteres.</small>
+                    <input type="password" name="password" class="form-control" minlength="8" placeholder="Dejar vacío para conservar la actual">
+                    <small class="text-muted">Dejar vacío si no quieres cambiarla.</small>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Rol</label>
                     <select name="rol" class="form-select" value="{{ empleado.rol }}" required>
-                        <option value="EMPLEADO" selected>Empleado</option>
-                        <option value="DUENA">Administrativo</option>
+                        <option value="EMPLEADO" {% if empleado.rol == 'EMPLEADO' %}selected{% endif %}>Empleado</option>
+                        <option value="DUENA" {% if empleado.rol == 'DUENA' %}selected{% endif %}>Administrativo</option>
                     </select>
                 </div>
             </div>

@@ -80,6 +80,7 @@ def api_detalle_pedido(request, pedido_id):
             'detalles__variante_producto__producto',
             'detalles__variante_producto__tamaño',
             'detalles__modificaciones__ingrediente',
+            'empleado_preparacion',
         ).get(id=pedido_id)
 
         detalles_list = []
@@ -103,6 +104,13 @@ def api_detalle_pedido(request, pedido_id):
                 'notas': detalle.notas_extra or '',
                 'modificaciones': modificaciones,
             })
+
+        if pedido.empleado_preparacion:
+            empleado_nombre = f"{pedido.empleado_preparacion.first_name} {pedido.empleado_preparacion.last_name}".strip()
+            if not empleado_nombre:
+                empleado_nombre = pedido.empleado_preparacion.username
+        else:
+            empleado_nombre = 'Sin asignar'
 
         data = {
             'id': pedido.id,
@@ -827,24 +835,43 @@ def editar_empleado(request, empleado_id):
     empleado = get_object_or_404(Empleado, id=empleado_id)
     
     if request.method == 'POST':
-        empleado.username = request.POST.get('username', '').strip()
-        empleado.first_name = request.POST.get('first_name', '').strip()
-        empleado.last_name = request.POST.get('last_name', '').strip()
-        empleado.email = request.POST.get('email', '').strip()
-        empleado.password = request.POST.get('password', '')
-        empleado.rol = request.POST.get('rol', 'EMPLEADO')
-    
+        nuevo_username = request.POST.get('username', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        rol = request.POST.get('rol', 'EMPLEADO')
+        
+        if not nuevo_username or not first_name or not last_name or not email:
+            messages.error(request, 'Nombre, apellido, usuario y correo son obligatorios.')
+            return render(request, 'panel_admin/editar_empleado.html', {'empleado': empleado})
+
+        if Empleado.objects.filter(username=nuevo_username).exclude(id=empleado.id).exists():
+            messages.error(request, f'El empleado "{nuevo_username}" ya existe.')
+            return render(request, 'panel_admin/editar_empleado.html', {'empleado': empleado})
+
+        if password and len(password) < 8:
+            messages.error(request, 'La contraseña debe tener al menos 8 caracteres.')
+            return render(request, 'panel_admin/editar_empleado.html', {'empleado': empleado})
+        
+        empleado.username = nuevo_username
+        empleado.first_name = first_name
+        empleado.last_name = last_name
+        empleado.email = email
+        empleado.rol = rol
+        
+        if password:
+            empleado.set_password(password)
+
+        empleado.save()
+        
         messages.success(
             request,
-            f'Producto "{empleado.first_name} {empleado.last_name}" actualizado.'
+            f'Empleado "{empleado.first_name} {empleado.last_name}" actualizado correctamente.'
         )
-    
         return redirect('empleados')
     
-    contexto = {
-        'empleado': empleado,
-    }
-    
+    contexto = {'empleado': empleado}
     return render(request, 'panel_admin/editar_empleado.html', contexto)
 
 @login_required(login_url='inicio')

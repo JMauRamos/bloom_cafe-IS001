@@ -137,6 +137,9 @@
                                                   data-id="{{ pedido.id }}" 
                                                   data-nuevo-estado="ENTREGADO">Marcar Entregado</button>
                                    {% endif %}
+                                   {% if pedido.estado == 'PENDIENTE' or pedido.estado == 'PREPARANDO' %}
+                                        <button type="button" class="btn-estado btn-cancelar-pedido-admin" data-id="{{ pedido.id }}">Cancelar pedido</button>
+                                   {% endif %}
                                    <button type="button" class="action" data-bs-toggle="modal" data-bs-target="#detallePedidoModal" data-id="{{ pedido.id }}">
                                         <i class="bi bi-eye"></i> Ver Detalle
                                    </button>

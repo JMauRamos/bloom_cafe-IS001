@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+<form id="csrf-form" hidden>{% csrf_token %}</form>
 
 <section class="contenedor">
     <section class="bienvenida">

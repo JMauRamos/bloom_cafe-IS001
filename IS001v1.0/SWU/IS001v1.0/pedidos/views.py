@@ -103,6 +103,58 @@ def avanzar_estado_pedido(request, pedido_id):
     })
 
 
+@login_required(login_url='inicio')
+@require_POST
+def cancelar_pedido_admin(request, pedido_id):
+    with transaction.atomic():
+        pedido = get_object_or_404(
+            Pedido.objects.select_for_update(),
+            id=pedido_id
+        )
+        if pedido.estado not in ('PENDIENTE', 'PREPARANDO'):
+            return JsonResponse({
+                'error': 'Solo se pueden cancelar pedidos pendientes o en preparación.'
+            }, status=409)
+
+        pedido.estado = 'CANCELADO'
+        pedido.save(update_fields=['estado'])
+
+    return JsonResponse({
+        'status': 'success',
+        'mensaje': 'El pedido fue cancelado correctamente.',
+        'nuevo_estado': pedido.get_estado_display(),
+    })
+
+
+@require_POST
+def cancelar_pedido_cliente(request, pedido_id):
+    telefono = request.POST.get('telefono', '').strip()
+    if not telefono:
+        return JsonResponse({
+            'error': 'Ingresa el teléfono registrado en el pedido.'
+        }, status=400)
+
+    with transaction.atomic():
+        pedido = get_object_or_404(
+            Pedido.objects.select_for_update(),
+            id=pedido_id,
+            telefono_cliente=telefono
+        )
+        if pedido.estado in ('ENTREGADO', 'CANCELADO'):
+            return JsonResponse({
+                'error': 'Este pedido ya fue entregado o cancelado.'
+            }, status=409)
+
+        pedido.estado = 'CANCELADO'
+        pedido.save(update_fields=['estado'])
+
+    return JsonResponse({
+        'status': 'success',
+        'mensaje': 'Tu pedido fue cancelado correctamente.',
+        'nuevo_estado': pedido.get_estado_display(),
+    })
+
+
 def api_detalle_pedido(request, pedido_id):
     try:
         pedido = Pedido.objects.prefetch_related(
@@ -146,6 +198,7 @@ def api_detalle_pedido(request, pedido_id):
             'cliente': pedido.nombre_cliente,
             'telefono': pedido.telefono_cliente,
             'estado': pedido.get_estado_display(),
+            'puede_cancelar': pedido.estado not in ('ENTREGADO', 'CANCELADO'),
             'fecha': pedido.fecha_entrega.strftime('%d/%m/%Y') if pedido.fecha_entrega else '',
             'hora': pedido.hora_entrega.strftime('%H:%M') if pedido.hora_entrega else '',
             'lugar_entrega': pedido.get_lugar_entrega_display(),

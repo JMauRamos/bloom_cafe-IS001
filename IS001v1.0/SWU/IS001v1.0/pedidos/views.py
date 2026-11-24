@@ -630,6 +630,7 @@ def api_mis_pedidos(request, telefono):
         lista_pedidos.append({
             'id': pedido.id,
             'estado': pedido.get_estado_display(),
+            'puede_cancelar': pedido.estado not in ('ENTREGADO', 'CANCELADO'),
             'fecha': pedido.fecha_entrega.strftime('%d/%m/%Y'),
             'hora': pedido.hora_entrega.strftime('%H:%M'),
             'total': float(pedido.total),

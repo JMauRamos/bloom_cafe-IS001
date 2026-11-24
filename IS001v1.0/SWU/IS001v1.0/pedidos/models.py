@@ -11,6 +11,7 @@ class Pedido(models.Model):
     telefono_cliente = models.CharField(max_length=20)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     estado = models.CharField(max_length=40, choices=ESTADOS_PEDIDO, default='PENDIENTE')
+    fecha_registro = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='Fecha de registro')
     fecha_entrega = models.DateField(verbose_name='Fecha de Entrega')
     hora_entrega = models.TimeField(verbose_name='Hora de Entrega')
     lugar_entrega = models.CharField(max_length=20, choices=LUGARES_ENTREGA)

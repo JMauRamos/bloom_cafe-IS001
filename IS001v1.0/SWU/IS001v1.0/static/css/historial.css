@@ -346,3 +346,23 @@ footer {
         scroll-behavior: auto !important;
     }
 }
+
+.btn-cancelar-pedido {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #a33d36;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-cancelar-pedido:hover {
+    background: #852e28;
+}
+
+.btn-cancelar-pedido:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}

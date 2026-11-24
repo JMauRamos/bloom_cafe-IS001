@@ -19,5 +19,7 @@ urlpatterns = [
     path('api/pedido/<int:pedido_id>/cambiar_estado/', views.avanzar_estado_pedido, name='cambiar_estado_pedido'),
     path('ingredientes/', views.ingredientes_admin, name='ingredientes_admin'),
     path('extras/', views.extras_admin, name='extras_admin'),
+    path('api/pedido/<int:pedido_id>/cancelar/', views.cancelar_pedido_admin, name='cancelar_pedido_admin'),
+    path('api/mis_pedidos/<int:pedido_id>/cancelar/', views.cancelar_pedido_cliente, name='cancelar_pedido_cliente'),
     path('api/pedido/<int:pedido_id>/detalle/', views.api_detalle_pedido, name='api_detalle_pedido'),
 ]

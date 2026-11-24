@@ -107,6 +107,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    document.querySelectorAll('.btn-cancelar-pedido-admin').forEach(boton => {
+        boton.addEventListener('click', async () => {
+            if (!window.confirm('¿Confirmas que deseas cancelar este pedido?')) return;
+
+            boton.disabled = true;
+            const textoOriginal = boton.textContent;
+            boton.textContent = 'Cancelando...';
+
+            try {
+                const response = await fetch(`/pedidos/api/pedido/${boton.dataset.id}/cancelar/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                });
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'No fue posible cancelar el pedido.');
+
+                alert(data.mensaje);
+                window.location.reload();
+            } catch (error) {
+                alert(error.message || 'Hubo un problema de conexión. Intenta de nuevo.');
+                boton.disabled = false;
+                boton.textContent = textoOriginal;
+            }
+        });
+    });
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {

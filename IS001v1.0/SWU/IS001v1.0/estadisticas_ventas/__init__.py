@@ -1,1 +1,1 @@
-Consultas y utilidades para las estadísticas de ventas
+"""Consultas y utilidades para las estadísticas de ventas."""

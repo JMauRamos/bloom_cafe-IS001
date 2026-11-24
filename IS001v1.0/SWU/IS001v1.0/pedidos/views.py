@@ -4,10 +4,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 import json
 from django.http import JsonResponse
-from django.db import transaction
+from django.db import DatabaseError, transaction
 from django.db.models import ProtectedError
 from django.contrib import messages
 from .models import Pedido, DetallePedido, Modificacion
+from estadisticas_ventas.consultas import PERIODOS, obtener_estadisticas_ventas
 from menu.models import VarianteProducto, Ingrediente, Producto, Categoria, Tamaño
 from usuarios.models import Empleado
 from usuarios.decorators import solo_duena
@@ -23,7 +24,35 @@ def ver_mis_pedidos(request):
 @login_required(login_url='inicio')
 @solo_duena
 def dashboard(request):
-    return render(request, 'panel_admin/dashboard.html')
+    periodo = request.GET.get('periodo', 'dia')
+    periodo_invalido = periodo not in PERIODOS
+    if periodo_invalido:
+        periodo = 'dia'
+
+    try:
+        contexto = obtener_estadisticas_ventas(periodo)
+        error_estadisticas = False
+    except DatabaseError:
+        contexto = {
+            'fecha_actual': date.today(),
+            'etiqueta_periodo': PERIODOS[periodo],
+            'cantidad_pedidos': 0,
+            'pedidos_cancelados': 0,
+            'ventas': 0,
+            'productos_vendidos': 0,
+            'productos_mas_vendidos': [],
+            'pedidos_recientes': [],
+            'hay_pedidos': False,
+            'hay_pedidos_sin_fecha': False,
+        }
+        error_estadisticas = True
+    contexto.update({
+        'periodo': periodo,
+        'periodos': PERIODOS,
+        'periodo_invalido': periodo_invalido,
+        'error_estadisticas': error_estadisticas,
+    })
+    return render(request, 'panel_admin/dashboard.html', contexto)
 
 @login_required(login_url='inicio')
 def pedidos_admin(request):

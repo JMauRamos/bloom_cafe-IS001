@@ -33,7 +33,6 @@
           <span>✦</span>Ingredientes y Extras
         </a>
         <a href="{%url 'empleados' %}" class="{% if request.resolver_match.url_name == 'empleados' %}active{% endif %}"><span>⚇</span>Empleados</a>
-        <a href="#reportes"><span>▥</span>Reportes</a>
         {% endif %}
       </nav>
       <a class="logout" href="{% url 'logout' %}"><span>&rarrhk;</span>Cerrar sesi&oacute;n</a>
